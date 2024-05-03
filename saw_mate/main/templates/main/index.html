@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block  css %}
+    <link rel="stylesheet" href="{% static "deps/css/my_footer_css.css" %}">
+{% endblock%}
+{% comment %} расширяем базовый шаблон кнопкой корзины {% endcomment %}
+{% comment %} {% block modal_cart %}
+    {% include "includes/cart_button.html" %}
+{% endblock %} {% endcomment %}
+{% comment %} расширяем базовый шаблон кнопкой колоды карт {% endcomment %}
+{% block modal_carddeck %}
+    {% include "includes/carddeck_button.html" %}
+{% endblock %}
+
+{% block content %}
+    <div class="mt-5 pt-5 bg-white custom-shadow rounded">
+        <h2 class="m2"><strong>{{ content }}</strong></h2>
+        <p class="m2">{{ text_on_page }}</P>
+    </div>
+    <hr>
+    <hr>
+    <hr>
+    <h1 style="color: orange;">
+        СУПЕР МЕГА ГАЧА ИГРА
+    </h1>
+{% endblock  %}
+
+
+{% block footer %}
+    <footer class="py-4 bg-dark">
+        <div class="container">
+            <p class="m-0 text-center text-white">Copyright &copy; Orcs Power 2024</p>
+        </div>
+    </footer>
+{% endblock%}

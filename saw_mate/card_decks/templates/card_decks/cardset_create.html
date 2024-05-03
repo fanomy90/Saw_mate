@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load carddecks_tags %}
+{% load carts_tags %}
+
+{% block content %}
+    <div class=" bg-white p-4 mb-4 mx-2 rounded custom-shadow">
+        <div class="container">
+            <h3 class="text-center mb-4">Доступные карточки пользователя</h3>
+            <div class="container" id="cart-items-container">
+                <!-- Разметка корзины -->
+                    {% user_carddecks request as carddecks %}
+                    {% comment %} {% include 'carts/includes/included_set.html' %} {% endcomment %}
+                    {% include 'card_decks/includes/included_slider.html' %}
+                <!-- Закончилась разметка корзины -->
+            </div>
+        </div>
+        <!-- Детали заказа -->
+        <div class="container">
+            <h3 class="text-center">Набор карт для игры</h3>
+            <div class="card mb-3">
+                <div class="card-body">
+                    <form action = "{% url 'carddecks:cardset_create' %}" method="post">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="id_cardset_name" class="form-label">Набор карт для игры:</label>
+                                <input type="text" class="form-control" id="id_cardset_name"
+                                    value="{% if form.cardset_name.value %}{{ form.cardset_name.value }}{% endif %}"
+                                    name="cardset_name" required>
+                                    {% if form.cardset_name.errors %}
+                                        <div class="alert alert-danger alert-dismissible fade show">{{ form.cardset_name.errors }}</div>
+                                    {% endif %}
+                            </div>
+                            <div class="col-md-12 mb-3">Состояние набора карт: </label>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="cardset_status"
+                                        id="id_cardset_status" value="1" checked>
+                                    <label class="form-check-label" for="id_cardset_status">Активировать набор</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="cardset_status"
+                                        id="id_cardset_status" value="0">
+                                    <label class="form-check-label" for="id_cardset_status">Деактивировать набор</label>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-dark">Создать новый набор карт для игры</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock  %}

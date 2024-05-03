@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block  css %}
+    <link rel="stylesheet" href="{% static "deps/css/my_footer_css.css" %}">
+{% endblock%}
+
+{% block scripts %}
+    <!--Импорт three.js и его адонов-->
+    <script type="importmap">
+        {
+            "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.164.1/examples/jsm/"
+            }
+        }
+    </script>
+    <!--получение фигур из модели-->
+    <script>
+        const shapes = JSON.parse('{{ shapes | safe }}')
+        console.log(shapes)
+    </script>
+    <!--подключение скрипта для работы со сценой-->
+    <script type="module" src="{% static "deps/js/main3.js" %}" defer></script>
+{% endblock scripts%}
+
+{% comment %} расширяем базовый шаблон кнопкой корзины {% endcomment %}
+{% comment %} {% block modal_cart %}
+    {% include "includes/cart_button.html" %}
+{% endblock %} {% endcomment %}
+{% comment %} расширяем базовый шаблон кнопкой колоды карт {% endcomment %}
+{% block modal_carddeck %}
+    {% include "includes/carddeck_button.html" %}
+{% endblock %}
+
+{% block content %}
+    <div class="mt-5 pt-5 bg-white custom-shadow rounded">
+        <h2 class="m2"><strong>{{ content }}</strong></h2>
+        <p class="m2">{{ text_on_page }}</P>
+        {% comment %} <div id="scene-box" style="border: 1px solid black; position: relative; z-index: 9999;"></div> {% endcomment %}
+        {% comment %} <div id="scene-box" data-static-url="{% static 'deps/js/gawr_gura/scene.gltf' %}" ></div> {% endcomment %}
+    </div>
+    <hr>
+    <hr>
+    <hr>
+    <h1 style="color: orange;">
+        Новая игра
+    </h1>
+    <hr>
+    <p style="color: orange;">
+        Игра с ботом
+    </p>
+    <!--добавление сцены-->
+    {% comment %} <div id="scene-box" style="width: 200px; height: 150px; border: 1px solid black;"></div> {% endcomment %}
+    <br>
+    <br>
+    <br>
+    {% comment %} <div id="scene-box" data-static-url="{% static 'deps/js/gawr_gura/scene.gltf' %}" ></div> {% endcomment %}
+    {% comment %} <div id="scene-box" data-static-url="{% static 'deps/js/darkness1/darknessre_zero_infinity-v2.glb' %}" ></div> {% endcomment %}
+    <div id="scene-box"></div>
+    <button id="load-models-button1" data-static-url="{% static 'deps/js/darkness1/darknessre_zero_infinity-v2.glb' %}">Загрузить модель1</button>
+    <br>
+    <button id="load-models-button2" data-static-url="{% static 'deps/js/tifa.glb' %}">Загрузить tifa</button>
+    <br>
+    <button id="load-models-button3" data-static-url="{% static 'deps/js/warhammer.glb' %}">Загрузить модель warhammer.glb</button>
+    
+{% endblock  %}
+
+{% block footer %}
+    <footer class="py-4 bg-dark">
+        <div class="container">
+            <p class="m-0 text-center text-white">Copyright &copy; Orcs Power 2024</p>
+        </div>
+    </footer>
+{% endblock%}

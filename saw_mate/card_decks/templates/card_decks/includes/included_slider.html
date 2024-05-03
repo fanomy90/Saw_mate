@@ -1,0 +1,163 @@
+<!--Подключаемый шаблон колоды карт пользователя-->
+{% load static %}
+{% load cards_tags %}
+{% load carddecks_tags %}
+<div class="card mb-3 text-bg-light shadow-lg">
+    <section id="tranding">
+        <!--Нужен для передачи cardset_id через js в представление в POST запросе-->
+        {% comment %} <div class="container" id="carddeck-items-container"> {% endcomment %}
+            <div class="accordion" id="accordionCardDecks">
+                {% tag_categories as categories %}
+                {% for category in categories %}
+                <!--Убираем вывод всех категорий в колоде пользователя - сейчас не передается контекст для всех категорий что приводит к поломке slider карусели-->
+                    {% if category.name != 'Все' %}
+                        {% comment %} скрываем кнопки категорий карточек когда нет объектов для вывода {% endcomment %}
+                        {% if carddecks %}
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="heading{{ category.id }}">
+                                    <button class="accordion-button {% if category != categories.0 %}collapsed{% endif %}" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ category.id }}" aria-expanded="false" aria-controls="collapse{{ category.id }}">
+                                        {{ category.name }}
+                                        карточек в категории - {{ carddecks.total_quantity }}
+                                    </button>
+                                </h2>
+                                <div id="collapse{{ category.id }}" class="accordion-collapse collapse {% if category == categories.0 %}show{% endif %}" aria-labelledby="heading{{ category.id }}" data-bs-parent="#accordionCardDecks" data-category-id="{{ category.id }}">
+                                    <div class="accordion-body">
+
+                                        <div class="container carddeck_list_container">
+                                            {% for carddeck in carddecks %}
+                                                {% if carddeck.product.category.name == category.name %}
+                                                    {% if carddeck.quantity > 0 %}
+                                                        <ul class="carddeck_card_list" data-item-count="{{ carddecks.length }}">
+                                                            <li class="carddeck_list_item">
+                                                                <div class="content1">
+                                                                    <div class="card-img">
+                                                                        {% if carddeck.product.image %}
+                                                                            <img src="{{ carddeck.product.image.url }}" class="card-img-top" alt="Карточка колоды">
+                                                                        {% else %}
+                                                                            <img src="{% static "deps/images/empty3.jpg" %}" class="card-img-top" alt="Карточка персонажа" style="max-height: 265px; overflow: auto">
+                                                                        {% endif %}
+                                                                    </div>
+                                                                    <div class="action_carddeck">
+                                                                        <!--Перенос карточки в колоду-->
+                                                                        <p class="carddeck_change">
+                                                                            <a href="{% url 'carddeck:carddeck_change' %}" class="add-to-cardset" data-carddeck-id="{{ carddeck.id }}">
+                                                                                {% csrf_token %}
+                                                                                <img class="mx-1" src="{% static "deps/icons/cardsets.svg" %}" alt="Catalog Icon" width="16" height="16">
+                                                                            </a>
+                                                                        </p>
+                                                                        <p class="carddeck_change">{{carddeck.product.name}}</p>
+                                                                        <!--Перенос карточки из колоды-->
+                                                                        <p class="product-delete">
+                                                                            <a href="{% url 'carddeck:carddeck_remove' %}" class="remove-from-carddeck" data-carddeck-id="{{ carddeck.id }}">
+                                                                                {% csrf_token %}
+                                                                                <img class="mx-1" src="{% static "deps/icons/trash3-fill.svg" %}" alt="Catalog Icon" width="16" height="16">
+                                                                            </a>
+                                                                        </p>
+                                                                    </div>
+                                                                    <p>carddeck sell_price: {{ carddeck.product.sell_price }}</p>
+                                                                    <p>category name: {{ carddeck.product.category.name }}</p>
+                                                                    <p>carddeck id: {{ carddeck.id }}</p>
+                                                                    <p>carddeck quantity: {{ carddeck.quantity }}</p>
+                                                                </div>
+                                                            </li>
+                                                        </ul>
+                                                    {% endif %}
+                                                {% endif %}
+                                            {% endfor %}
+                                        </div>
+
+
+
+
+
+
+                                        {% comment %} <div class="container">
+                                            <div class="swiper tranding-slider">
+                                                <div class="swiper-wrapper">
+                                                    <!--Slide-start-->
+                                                    {% for carddeck in carddecks %}
+                                                        {% if carddeck.product.category.name == category.name %}
+                                                            {% if carddeck.quantity > 0 %}
+                                                                <div class="swiper-slide tranding-slide">
+                                                                    <div class="tranding-slide-img">
+                                                                        <img src="{{ carddeck.product.image.url }}" class="card-img-top" alt="...">
+                                                                    </div>
+                                                                    <div class="tranding-slide-content">
+                                                                        <h1 class="product-price">product sell_price: {{ carddeck.product.sell_price }}</h1>
+                                                                        <h1 class="product-price">category name: {{ carddeck.product.category.name }}</h1>
+                                                                        <h1 class="product-price">carddeck id: {{ carddeck.id }}</h1>
+                                                                        <h1 class="product-price">carddeck quantity: {{ carddeck.quantity }}</h1>
+                                                                        <div class="tranding-slide-content-bottom">
+                                                                            <h2 class="product-name">
+                                                                                {{ carddeck.product.name }}
+                                                                            </h2>
+                                                                            <h3 class="product-discount">
+                                                                                {{ carddeck.quantity }}
+                                                                                {{ carddeck.product.category.name }}
+                                                                            </h3>
+                                                                            <h3 class="product-delete">
+                                                                                <a href="{% url 'carddeck:carddeck_remove' %}" class="remove-from-carddeck" 
+                                                                                data-carddeck-id="{{ carddeck.id }}">
+                                                                                {% csrf_token %}
+                                                                                    <img class="mx-1" src="{% static "deps/icons/trash3-fill.svg" %}"
+                                                                                        alt="Catalog Icon" width="16" height="16">
+                                                                                </a>
+                                                                            </h3>
+                                                                            <h3 class="carddeck_change">
+                                                                                <a href="{% url 'carddeck:carddeck_change' %}" class="add-to-cardset"
+                                                                                data-carddeck-id="{{ carddeck.id }}">
+                                                                                {% csrf_token %}
+                                                                                    <img class="mx-1" src="{% static "deps/icons/cardsets.svg" %}"
+                                                                                        alt="Catalog Icon" width="16" height="16">
+                                                                                </a>
+                                                                            </h3>
+                                                                            <div class="rating">
+                                                                                <ion-ico name="star">/<ion-ico>
+                                                                                <ion-ico name="star">/<ion-ico>
+                                                                                <ion-ico name="star">/<ion-ico>
+                                                                                <ion-ico name="star">/<ion-ico>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            {% endif %}
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                    <!--Slide-end-->
+                                                </div>
+                                                <!--Навигация карусели-->
+                                                <div class="tranding-slider-control2">
+                                                    <div class="swiper-button-prev slider-arrow">
+                                                        <ion-icon name="arrow-back-outline"></ion-icon>
+                                                    </div>
+                                                <div class="swiper-button-next slider-arrow">
+                                                    <ion-icon name="arrow-forward-outline"></ion-icon>
+                                                </div>
+                                                    <div class="swiper-pagination">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div> {% endcomment %}
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
+            </div>
+        {% comment %} </div> {% endcomment %}
+    </section>
+</div>
+{% comment %} </div>
+<div class="card mb-3 shadow-lg">
+    <div class="card-footer">
+        <p class="float-left">Итого <strong>{{ carddecks.total_quantity }}</strong> карточек пользователя</p>
+    </div>
+</div> {% endcomment %}
+<div class="carddeck_footer">
+    <div class="card mb-3 shadow-lg mt-auto" >
+        <div class="card-footer">
+            <p class="float-left">Итого <strong>{{ carddecks.total_quantity }}</strong> карточек пользователя</p>
+        </div>
+    </div>
+</div>

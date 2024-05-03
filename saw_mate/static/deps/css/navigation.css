@@ -1,0 +1,135 @@
+/*Стилизация карточек колоды*/
+.container.carddeck_list_container {
+    overflow-x: auto; /* Добавляем горизонтальную прокрутку при необходимости */
+    white-space: nowrap; /* Запрещаем перенос текста для создания горизонтального списка */
+}
+.carddeck_card_list {
+    display: inline-block; /* Отображаем элементы списка в одной строке */
+    justify-content: center;
+    list-style-type: none;
+    padding: 0;
+    overflow-x: auto;
+}
+/*дополнительный стиль когда карточек баффов в наборе меньше 3*/
+.simple_carddeck_list {
+    display: flex;
+    justify-content: center;
+    
+}
+.carddeck_list_item {
+    margin: 0 10px; /* Отступы по бокам */
+    flex: 0 0 auto; /* установите flex-grow, flex-shrink и flex-basis в auto, чтобы элементы могли изменять свой размер */
+    width: 300px; /* установите фиксированную ширину для элементов списка */
+    height: 480px; /* установите фиксированную высоту для элементов списка */
+}
+/*Стилизация карточек набора*/
+.action_carddeck {
+    display: flex; /* Размещаем элементы на одной строке */
+    justify-content: space-between; /* Располагаем элементы по краям контейнера */
+    text-align: center;
+    color: rgb(255, 255, 47);
+}
+.action_card_list {
+    display: flex;
+    justify-content: left;
+    list-style-type: none;
+    padding: 0;
+    overflow-x: auto;
+}
+/*дополнительный стиль когда карточек баффов в наборе меньше 3*/
+.simple_card_list {
+    justify-content: center;
+    margin-bottom: 10px; /* Отступ между элементами */
+}
+.action_card_list_item {
+    margin: 0 10px; /* Отступы по бокам */
+    flex: 0 0 auto; /* установите flex-grow, flex-shrink и flex-basis в auto, чтобы элементы могли изменять свой размер */
+    width: 300px; /* установите фиксированную ширину для элементов списка */
+    height: 520px; /* установите фиксированную высоту для элементов списка */
+}
+.card-img {
+    height: 265px; /* Максимальная высота для изображений */
+    overflow: hidden; /* Обрезать изображение, если оно выходит за пределы контейнера */
+    display: flex; /* Используйте flexbox */
+    justify-content: center; /* Выравнивание по центру по горизонтали */
+    align-items: center; /* Выравнивание по центру по вертикали */
+    
+}
+.card-img img {
+    width: 100%; /* Изображение займет всю доступную ширину контейнера */
+    height: 100%; /* Автоматическая высота для сохранения соотношения сторон */
+    object-fit: cover;
+}
+.content {
+    background-color: #15799a;
+    padding: 20px;
+    text-align: center;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+.action_cardset {
+    display: flex; /* Размещаем элементы на одной строке */
+    justify-content: space-between; /* Располагаем элементы по краям контейнера */
+    text-align: center;
+    color: rgb(255, 255, 47);
+}
+.action_cardset p {
+    margin: 0; /* Убираем внутренние отступы */
+}
+/*Стилизация карточек героев*/
+.hero_card_list {
+    display: flex;
+    justify-content: center;
+    list-style-type: none;
+    padding: 0;
+    overflow-x:inherit;
+}
+.hero_card_list_item {
+    margin: 0 10px; /* Отступы по бокам */
+    flex: 0 0 auto; /* установите flex-grow, flex-shrink и flex-basis в auto, чтобы элементы могли изменять свой размер */
+    width: 230px; /* установите фиксированную ширину для элементов списка */
+    height: 420px; /* установите фиксированную высоту для элементов списка */
+}
+.content1 {
+    padding: 10px; /* Поля вокруг содержимого */
+    background-color: purple; /* Цвет фона */
+    border: 6px solid rgb(255, 255, 47); /* Граница */
+    border-radius: 5px; /* Скругленные углы */
+    margin-top: 10px; /* Отступ сверху */
+}
+.item {
+    margin: 0 10px;
+    transform-origin: center bottom;
+    transition: transform 0.3s;
+}
+.item.first {
+    transform: translateY(-20px) rotate(-10deg);
+    transition: transform 0.3s; /* Поворот влево для первого элемента */
+}
+.item.last {
+    transform: translateY(20px) rotate(10deg);
+   /* Поворот вправо для последнего элемента */
+}
+.item.first:hover {
+    transform: translateY(20px) rotate(55deg);
+    transform: scale(1.1);
+}
+.item:hover {
+    transform: translateY(-20px) rotate(-5deg);
+    transform: scale(1.1);
+}
+/* Анимация увеличения */
+.item:hover .content {
+    transform: scale(1.1);
+}
+/* Велосипед для выставлении одинаковой высоты блоков профиля и колоды*/
+.row-equal-height {
+    display: flex;
+}
+.row-equal-height > [class*='col-'] {
+    display: flex;
+    flex-direction: column;
+}
+.row-equal-height > [class*='col-'] > * {
+    flex-grow: 1;
+}

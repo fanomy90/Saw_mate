@@ -1,0 +1,58 @@
+{% load static %}
+{% comment %} переиспользуемый блок для визуализации купленных карточек модели CardDeck {% endcomment %}
+<div class="card mb-3 text-bg-light shadow-lg">
+    <h5>Проверка приложения card_deck</h5>
+    {% for carddeck in carddecks %}
+        <div class="card-header">
+            <h5 class="card-title">{{ carddeck.product.name }}</h5>
+        </div>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+                <div class="row text-center">
+                    <div class="col p-0">
+                        <p class="card-title">{{ carddeck.product.name }} </p>
+                    </div>
+                    <div class="col p-0">
+                        <div class="input-group">
+                            <span class="input-group-btn">
+                                <button type="button" class="btn btn-dark btn-sm decrement-carddeck"
+                                    data-carddeck-id="{{ carddeck.id }}" 
+                                    data-carddeck-change-url="{% url 'carddeck:carddeck_change' %}">
+                                    {% csrf_token %}
+                                    -</button>
+                            </span>
+                            <input type="text" class="form-control number" value="{{ carddeck.quantity }}"
+                                readonly>
+                            <span class="input-group-btn">
+                                <button type="button" class="btn btn-dark btn-sm increment-carddeck"
+                                    data-carddeck-id="{{ carddeck.id }}" 
+                                    data-carddeck-change-url="{% url 'carddeck:carddeck_change' %}">
+                                    {% csrf_token %}
+                                    +</button>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col p-0">
+                        {% comment %} <p>x {{ carddeck.product.sell_price }} = </p> {% endcomment %}
+                    </div>
+                    {% comment %} <div class="col p-0"><strong>{{ carddeck.products_price }} $</strong></div> {% endcomment %}
+                    <div class="col p-0">
+                        <a href="{% url 'carddeck:carddeck_remove' %}" class="remove-from-carddeck" 
+                        data-carddeck-id="{{ carddeck.id }}">
+                        {% csrf_token %}
+                            <img class="mx-1" src="{% static "deps/icons/trash3-fill.svg" %}"
+                                alt="Catalog Icon" width="16" height="16">
+                        </a>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    {% endfor %}
+
+</div>
+<div class="card mb-3 shadow-lg">
+    <div class="card-footer">
+        <p class="float-left">Итого <strong>{{ carddeck.total_quantity }}</strong> Всего карточек пользователя</p>
+        <h4 class="float-left"><strong>{{ carddeck.total_quantity }} $</strong></h4>
+    </div>
+</div>

@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 //логика работы карточек героев
 import {
     MeshBasicMaterial,
@@ -198,6 +197,4 @@ randomNumber2 = Math.floor(Math.random() * (maximum2 - minimum + 1)) + minimum;
 configureCard(card10, opponentCardsPositions, opponentCardsRotations, randomNumber2, 'citizen');
 
 export {CARDS, emperorTexture, slaveTexture}
-=======
-//логика работы карточек героев
->>>>>>> c38212834d8f82b6e19ab5318cfee7dfae845c83
+

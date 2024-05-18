@@ -2,11 +2,11 @@ from django.shortcuts import render
 from .models import Shape
 import json
 
-
 # Create your views here.
 def new_game(request):
     shapes = [{"type": int(x.type), "color": x.color} for x in Shape.objects.all()]
     shape_json = json.dumps(shapes)
+
     context: dict = {
         'title': 'Новая игра',
         'content': 'игра с ботом',

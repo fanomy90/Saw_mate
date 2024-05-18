@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "base3.html" %}
 {% load static %}
 
 {% block  css %}
@@ -10,8 +10,8 @@
     <script type="importmap">
         {
             "imports": {
-            "three": "https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.module.js",
-            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.164.1/examples/jsm/"
+                "three": "https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.module.js",
+                "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.164.1/examples/jsm/"
             }
         }
     </script>
@@ -21,14 +21,11 @@
         console.log(shapes)
     </script>
     <!--подключение скрипта для работы со сценой-->
-    <script type="module" src="{% static "deps/js/main3.js" %}" defer></script>
+    <script type="module" src="{% static "deps/js/scripts.js" %}" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+    
 {% endblock scripts%}
 
-{% comment %} расширяем базовый шаблон кнопкой корзины {% endcomment %}
-{% comment %} {% block modal_cart %}
-    {% include "includes/cart_button.html" %}
-{% endblock %} {% endcomment %}
-{% comment %} расширяем базовый шаблон кнопкой колоды карт {% endcomment %}
 {% block modal_carddeck %}
     {% include "includes/carddeck_button.html" %}
 {% endblock %}
@@ -37,8 +34,6 @@
     <div class="mt-5 pt-5 bg-white custom-shadow rounded">
         <h2 class="m2"><strong>{{ content }}</strong></h2>
         <p class="m2">{{ text_on_page }}</P>
-        {% comment %} <div id="scene-box" style="border: 1px solid black; position: relative; z-index: 9999;"></div> {% endcomment %}
-        {% comment %} <div id="scene-box" data-static-url="{% static 'deps/js/gawr_gura/scene.gltf' %}" ></div> {% endcomment %}
     </div>
     <hr>
     <hr>
@@ -50,6 +45,33 @@
     <p style="color: orange;">
         Игра с ботом
     </p>
+    <section>
+        <div class="score-container">
+            <p id="p1"><span>Opponent: </span><span id="opponent-score">0</span></p>
+            <p id="p2"><span>Player: </span><span id="player-score">0</span></p>
+        </div>
+    </section>
+    <section class="result">
+        <svg
+            id="victory"
+            height="200%"
+            stroke="#000"
+            stroke-width="2"
+            class="text-line"
+            width="200%">
+            <text x="50%" dominant-baseline="middle" text-anchor="middle" y="50%">DRAW</text>
+        </svg>
+        <svg
+            id="draw"
+            height="200%"
+            stroke="#000"
+            stroke-width="2"
+            class="text-line"
+            width="200%">
+            <text x="50%" dominant-baseline="middle" text-anchor="middle" y="50%">VICTORY</text>
+        </svg>
+        <button id="rematch">Rematch</button>
+    </section>
     <!--добавление сцены-->
     {% comment %} <div id="scene-box" style="width: 200px; height: 150px; border: 1px solid black;"></div> {% endcomment %}
     <br>
@@ -57,13 +79,30 @@
     <br>
     {% comment %} <div id="scene-box" data-static-url="{% static 'deps/js/gawr_gura/scene.gltf' %}" ></div> {% endcomment %}
     {% comment %} <div id="scene-box" data-static-url="{% static 'deps/js/darkness1/darknessre_zero_infinity-v2.glb' %}" ></div> {% endcomment %}
-    <div id="scene-box"></div>
-    <button id="load-models-button1" data-static-url="{% static 'deps/js/darkness1/darknessre_zero_infinity-v2.glb' %}">Загрузить модель1</button>
+    {% comment %} <div id="scene-box"></div> {% endcomment %}
+    <div id="scene-box" data-static-url="{% static 'deps/js/assets/kitchen_table.glb' %}" ></div>
+    <!--эксперименты с вызовом моделей по кнопкам-->
+    {% comment %} <button id="load-models-button1" data-static-url="{% static 'deps/js/darkness1/darknessre_zero_infinity-v2.glb' %}">Загрузить модель1</button>
     <br>
     <button id="load-models-button2" data-static-url="{% static 'deps/js/tifa.glb' %}">Загрузить tifa</button>
     <br>
-    <button id="load-models-button3" data-static-url="{% static 'deps/js/warhammer.glb' %}">Загрузить модель warhammer.glb</button>
+    <button id="load-models-button3" data-static-url="{% static 'deps/js/warhammer.glb' %}">Загрузить модель warhammer.glb</button> {% endcomment %}
     
+    <!--передача текстур в скрипт-->
+    <div id="texture-paths" style="display: none;"
+        data-citizen1 = "{% static 'deps/js/assets/citizen1.png' %}"
+        data-citizen2 = "{% static 'deps/js/assets/citizen2.png' %}"
+        data-citizen3 = "{% static 'deps/js/assets/citizen3.png' %}"
+        data-citizen4 = "{% static 'deps/js/assets/citizen4.png' %}"
+        data-cover = "{% static 'deps/js/assets/card2.png' %}"
+        data-emperor = "{% static 'deps/js/assets/emperor.png' %}"
+        data-slave = "{% static 'deps/js/assets/slave.png' %}"
+    ></div>
+    <!--передача звука в скрипт-->
+    <div id="audio-paths" style="display: none;"
+        data-card_drop = "{% static 'deps/js/assets/card_drop.mp3' %}"
+        data-card_flip = "{% static 'deps/js/assets/card_flip.mp3' %}"
+    ></div>
 {% endblock  %}
 
 {% block footer %}

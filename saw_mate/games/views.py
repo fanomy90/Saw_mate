@@ -15,6 +15,19 @@ def new_game(request):
     }
     return render(request, 'games/new_game.html', context)
 
+def genshin_game(request):
+    # фигуры пока не нужны
+    # shapes = [{"type": int(x.type), "color": x.color} for x in Shape.objects.all()]
+    # shape_json = json.dumps(shapes)
+
+    context: dict = {
+        'title': 'Геншин',
+        'content': 'Эрзац геншин гейм кард',
+        'text_on_page': 'Вариант карточной игры по мотивами геншин',
+        # 'shapes': shape_json,
+    }
+    return render(request, 'games/genshin_game.html', context)
+
 def lan_game(request):
     context: dict = {
         'title': 'Сетевая игра',

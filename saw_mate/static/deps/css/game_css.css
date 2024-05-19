@@ -1,3 +1,30 @@
-body {
-    margin: 0;
+html, body {
+    /* margin: 0;
+    padding: 0; */
+    /* overflow: hidden; */
+}
+
+/* .canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+} */
+
+scene-box {
+    position: fixed;
+    top: 0;
+    left: 0;
+}
+
+.click-area {
+    position: absolute;
+    cursor: pointer;
+    /* Установите координаты и размеры области */
+    /* Например, для карточки card1 */
+    top: 100px;
+    left: 100px;
+    width: 50px;
+    height: 50px;
+    /* Добавьте другие стили по мере необходимости */
+    background-color: rgba(255, 0, 0, 0.5); /* Красный цвет с непрозрачностью */
 }

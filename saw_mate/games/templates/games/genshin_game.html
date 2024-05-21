@@ -3,6 +3,7 @@
 
 {% block  css %}
     <link rel="stylesheet" href="{% static "deps/css/my_footer_css.css" %}">
+    <link rel="stylesheet" href="{% static "deps/css/game_css.css" %}">
 {% endblock%}
 
 {% block scripts %}
@@ -16,7 +17,7 @@
         }
     </script>
     <!--подключение скрипта для работы со сценой-->
-    <script type="module" src="{% static "deps/js/scripts.js" %}" defer></script>
+    <script type="module" src="{% static "deps/js/genshin_scripts.js" %}" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
 {% endblock scripts%}
 {% comment %} Убрать кнопку в будещем {% endcomment %}
@@ -69,7 +70,7 @@
         <button id="rematch">Rematch</button>
     </section>
     <br>
-    <div id="scene-box" data-static-url="{% static 'deps/js/assets/kitchen_table.glb' %}" ></div>
+    <div class="mt-5 pt-5 bg-white custom-shadow rounded" id="scene-box" data-static-url="{% static 'deps/js/assets/kitchen_table.glb' %}" ></div>
     <!--передача текстур в скрипт-->
     <div id="texture-paths" style="display: none;"
         data-citizen1 = "{% static 'deps/js/assets/citizen1.png' %}"

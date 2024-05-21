@@ -17,7 +17,7 @@
         }
     </script>
     <!--подключение скрипта для работы со сценой-->
-    <script type="module" src="{% static "deps/js/genshin_scripts.js" %}" defer></script>
+    <script type="module" src="{% static "deps/game/genshin/js/genshin_scripts.js" %}" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
 {% endblock scripts%}
 {% comment %} Убрать кнопку в будещем {% endcomment %}
@@ -26,13 +26,10 @@
 {% endblock %}
 
 {% block content %}
-    <div class="mt-5 pt-5 bg-white custom-shadow rounded">
+    {% comment %} <div class="mt-5 pt-5 bg-white custom-shadow rounded">
         <h2 class="m2"><strong>{{ content }}</strong></h2>
         <p class="m2">{{ text_on_page }}</P>
-    </div>
-    <hr>
-    <hr>
-    <hr>
+    </div> {% endcomment %}
     <h1 style="color: orange;">
         Новая игра
     </h1>
@@ -69,8 +66,8 @@
         </svg>
         <button id="rematch">Rematch</button>
     </section>
-    <br>
-    <div class="mt-5 pt-5 bg-white custom-shadow rounded" id="scene-box" data-static-url="{% static 'deps/js/assets/kitchen_table.glb' %}" ></div>
+    
+    <div class="mt-5 pt-5 bg-white custom-shadow rounded" id="scene-box" data-static-url="{% static 'deps/game/genshin/assets/table.glb' %}" ></div>
     <!--передача текстур в скрипт-->
     <div id="texture-paths" style="display: none;"
         data-citizen1 = "{% static 'deps/js/assets/citizen1.png' %}"

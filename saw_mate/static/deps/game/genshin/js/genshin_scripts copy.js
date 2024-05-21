@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { CARDS, emperorTexture,  slaveTexture } from './genshin_hero_card.js';
 //Получаем пути к текстурам из атрибутов элемента
 const audioPaths = document.getElementById('audio-paths');
@@ -56,8 +57,8 @@ const renderer = new THREE.WebGLRenderer({ alpha: true });
 //задаем размеры игрового окна
 const zoomFactor = calculateZoomFactor();
 //проверка calculateRender
-//renderer.setSize(1000, 700);
-
+renderer.setSize(1000, 700);
+//получение объекта куда будет передаваться canvas
 const sceneBox = document.getElementById('scene-box');
 sceneBox.appendChild(renderer.domElement);
 
@@ -69,15 +70,24 @@ renderer.toneMapping = THREE.ACESFilmicToneMapping;
 
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(
-    45,
+    50, //мастшаб
     window.innerWidth / window.innerHeight,
     0.1,
     1000
 );
-
+//управление сценой для отладки
+const controls = new OrbitControls(camera, renderer.domElement)
 // Camera positioning
-camera.position.set(0, 10, 6);
-camera.lookAt(new THREE.Vector3(0, 6, 2));
+// camera.position.set(0, 10, 6);
+// camera.lookAt(new THREE.Vector3(0, 6, 2));
+camera.position.set(0.25, 0.7, 0.9);
+//camera.zoom.set = 1;
+// camera.lookAt(new THREE.Vector3(10, -500, -8));
+camera.lookAt(new THREE.Vector3(0.25, -50, 2));
+
+// Вращение камеры по часовой стрелке (например, на 45 градусов)
+// camera.rotation.x = -Math.PI / 4;
+// camera.rotation.z = -Math.PI / 2;
 //добавление звука
 audioLoader.load(card_drop_audioPaths, function(buffer) {
     cardDrop.setBuffer(buffer);
@@ -210,7 +220,7 @@ function resetAndUpdate(side, sideText) {
 
 // Создаем объект для представления указателя мыши
 const mousePointerGeometry = new THREE.CircleGeometry(0.05, 32);
-const mousePointerMaterial = new THREE.MeshBasicMaterial({ color: 0xffff00 });
+const mousePointerMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
 const mousePointer = new THREE.Mesh(mousePointerGeometry, mousePointerMaterial);
 scene.add(mousePointer);
 
@@ -354,16 +364,16 @@ rematch.addEventListener('click', function() {
 
 function animate() {
     //проверка calculateRender
-    //renderer.render(scene, camera);
-    calculateRender("Startapp");
+    renderer.render(scene, camera);
+    // calculateRender("Startapp");
 }
 
 renderer.setAnimationLoop(animate);
 
 // адаптивность размера окна игры, ловим измение экрана
-window.addEventListener('resize', function() {
-    calculateRender("Resize");
-});
+// window.addEventListener('resize', function() {
+//     calculateRender("Resize");
+// });
 // window.addEventListener('resize', function() {
 //     // Изменяем масштаб камеры, чтобы адаптировать его к новому размеру окна
 //     sizes.width = window.innerWidth;
@@ -427,7 +437,7 @@ function calculateRender(settings) {
         renderer.render(scene, camera);
         console.log('calculateRender Fullscreen');
     } if (settings === "Resize" && document.fullscreenElement === null) {
-        zoomFactor = 0.5;
+        zoomFactor = 1;
         sizes.width = 1000;
         sizes.height = 700;
         camera.aspect = sizes.width / sizes.height;
@@ -441,17 +451,17 @@ function calculateRender(settings) {
 }
 
 //Вход в полноэкранный режим. Нужно добавить смену размеров экрана через calculateZoomFactor
-window.addEventListener('dblclick', () => {
-    if (sceneBox) {
-        if (document.fullscreenElement) {
-            console.log('exitFullscreen');
-            document.exitFullscreen();
-        } else {
-            console.log('Fullscreen');
-            sceneBox.requestFullscreen();
-            calculateRender("Fullscreen");
-        }
-    } else {
-        console.log('Scene box element not found');
-    }
-});
+// window.addEventListener('dblclick', () => {
+//     if (sceneBox) {
+//         if (document.fullscreenElement) {
+//             console.log('exitFullscreen');
+//             document.exitFullscreen();
+//         } else {
+//             console.log('Fullscreen');
+//             sceneBox.requestFullscreen();
+//             calculateRender("Fullscreen");
+//         }
+//     } else {
+//         console.log('Scene box element not found');
+//     }
+// });

@@ -25,6 +25,16 @@ const coverTexturePath = texturePaths.dataset.cover;
 const emperorTexturePath = texturePaths.dataset.emperor;
 const slaveTexturePath = texturePaths.dataset.slave;
 
+//карточки игрока
+const myHero1TexturePath = texturePaths.dataset.emperor;
+const myHero2TexturePath = texturePaths.dataset.emperor;
+const myHero3TexturePath = texturePaths.dataset.emperor;
+
+//карточки противника
+const opponentHero1TexturePath = texturePaths.dataset.slave;
+const opponentHero2TexturePath = texturePaths.dataset.slave;
+const opponentHero3TexturePath = texturePaths.dataset.slave;
+
 
 const citizen1Texture = textureLoader.load(citizen1TexturePath);
 citizen1Texture.colorSpace = SRGBColorSpace;
@@ -47,8 +57,23 @@ emperorTexture.colorSpace = SRGBColorSpace;
 const slaveTexture = textureLoader.load(slaveTexturePath);
 slaveTexture.colorSpace = SRGBColorSpace;
 
-//карточки баффов
+//карточки игрока загрузка текстур
+const myHero1Texture = textureLoader.load(myHero1TexturePath);
+myHero1Texture.colorSpace = SRGBColorSpace;
+const myHero2Texture = textureLoader.load(myHero2TexturePath);
+myHero2Texture.colorSpace = SRGBColorSpace;
+const myHero3Texture = textureLoader.load(myHero3TexturePath);
+myHero3Texture.colorSpace = SRGBColorSpace;
 
+//карточки баффов
+const opponentHero1Texture = textureLoader.load(opponentHero1TexturePath);
+opponentHero1Texture.colorSpace = SRGBColorSpace;
+const opponentHero2Texture = textureLoader.load(opponentHero2TexturePath);
+opponentHero2Texture.colorSpace = SRGBColorSpace;
+const opponentHero3Texture = textureLoader.load(opponentHero3TexturePath);
+opponentHero3Texture.colorSpace = SRGBColorSpace;
+
+//создание констант в виде списка словарей которые текстуры передней и задней стороны карточки
 const card1Mat = [
     new MeshBasicMaterial(),
     new MeshBasicMaterial(),
@@ -104,13 +129,12 @@ const card6Mat = [
 ];
 
 //карточки героев
-
 const card1Hero = [
     new MeshBasicMaterial(),
     new MeshBasicMaterial(),
     new MeshBasicMaterial(),
     new MeshBasicMaterial(),
-    new MeshBasicMaterial({map: slaveTexture}),
+    new MeshBasicMaterial({map: myHero1Texture}),
     new MeshBasicMaterial({map: coverTexture})
 ];
 
@@ -119,7 +143,7 @@ const card2Hero = [
     new MeshBasicMaterial(),
     new MeshBasicMaterial(),
     new MeshBasicMaterial(),
-    new MeshBasicMaterial({map: slaveTexture}),
+    new MeshBasicMaterial({map: myHero2Texture}),
     new MeshBasicMaterial({map: coverTexture})
 ];
 
@@ -128,7 +152,7 @@ const card3Hero = [
     new MeshBasicMaterial(),
     new MeshBasicMaterial(),
     new MeshBasicMaterial(),
-    new MeshBasicMaterial({map: slaveTexture}),
+    new MeshBasicMaterial({map: myHero3Texture}),
     new MeshBasicMaterial({map: coverTexture})
 ];
 
@@ -137,7 +161,7 @@ const card4Hero = [
     new MeshBasicMaterial(),
     new MeshBasicMaterial(),
     new MeshBasicMaterial(),
-    new MeshBasicMaterial({map: slaveTexture}),
+    new MeshBasicMaterial({map: opponentHero1Texture}),
     new MeshBasicMaterial({map: coverTexture})
 ];
 
@@ -146,7 +170,7 @@ const card5Hero = [
     new MeshBasicMaterial(),
     new MeshBasicMaterial(),
     new MeshBasicMaterial(),
-    new MeshBasicMaterial({map: slaveTexture}),
+    new MeshBasicMaterial({map: opponentHero2Texture}),
     new MeshBasicMaterial({map: coverTexture})
 ];
 
@@ -155,11 +179,12 @@ const card6Hero = [
     new MeshBasicMaterial(),
     new MeshBasicMaterial(),
     new MeshBasicMaterial(),
-    new MeshBasicMaterial({map: slaveTexture}),
+    new MeshBasicMaterial({map: opponentHero3Texture}),
     new MeshBasicMaterial({map: coverTexture})
 ];
 
 const CARDS = [];
+
 //позиционирование карточек
 const myCardsPositions = [
     new Vector3 (0.75, 0.9, -4.5),
@@ -173,7 +198,7 @@ const myCardsPositions = [
     new Vector3 (-0.25, 0.94, -4.5),
     // new Vector3 (-0.5, 6, 4.21),
 ];
-
+//поворот карточек
 const myCardsRotations = [
     new Vector3(-Math.PI / 2, 0, 3.1),
     // new Vector3(-Math.PI / 2, 0, -0.15),
@@ -187,38 +212,22 @@ const myCardsRotations = [
     // new Vector3(-Math.PI / 2, 0, 0.15),
 ];
 
-const myHeroCardsPositions = [
-    new Vector3 (0.75, 0.9, -4.5),
-    // new Vector3 (0.5, 6.004, 4.21),
-    new Vector3 (0.5, 0.91, -4.5),
-    // new Vector3 (0.25, 6.003, 4.17),
-    new Vector3 (0.25, 0.92, -4.5),
-    // new Vector3 (0, 6.002, 4.15),
-];
-
-const myHeroCardsRotations = [
-    new Vector3(-Math.PI / 2, 0, 3.1),
-    // new Vector3(-Math.PI / 2, 0, -0.15),
-    new Vector3(-Math.PI / 2, 0, 3.1),
-    // new Vector3(-Math.PI / 2, 0, -0.10),
-    new Vector3(-Math.PI / 2, 0, 3.1),
-    // new Vector3(-Math.PI / 2, 0, 0),
-];
-
+//добавление свойств карточке
 function configureCard(card, pos, rot, rNumb, name) {
-    card.name = name;
-    card.castShadow = true;
-    card.position.copy(pos[rNumb]);
-    card.rotation.set(rot[rNumb].x, rot[rNumb].y, rot[rNumb].z);
-    pos.splice(rNumb, 1);
-    rot.splice(rNumb, 1);
-    CARDS.push(card);
+    card.name = name; //имя карточки
+    card.castShadow = true; //включение теней
+    card.position.copy(pos[rNumb]); //установка позиции карточки
+    card.rotation.set(rot[rNumb].x, rot[rNumb].y, rot[rNumb].z); // установка вращения
+    pos.splice(rNumb, 1); //удаление позиции карточки
+    rot.splice(rNumb, 1); // удаление вращения
+    CARDS.push(card); // добавление карточки в массив
 }
-
+//генерация массива случайных чисел по координатам карточек
 const minimum = 0;
 let maximum1 = myCardsPositions.length - 1;
+//генерация случайного числа
 let randomNumber1 = Math.floor(Math.random() * (maximum1 - minimum + 1)) + minimum;
-
+// конфигурирование карточек
 const card1 = new Mesh(cardGeo, card1Mat);
 configureCard(card1, myCardsPositions, myCardsRotations, randomNumber1, 'hand playerCard1 emperor');
 
@@ -268,24 +277,6 @@ const opponentCardsRotations = [
     // new Vector3(2 * Math.PI, Math.PI, -0.15),
 ];
 
-const opponentHeroCardsPositions = [
-    new Vector3(0.75, 0.9, -0.5),
-    // new Vector3(0.5, 8.47, 2.5),
-    new Vector3(0.5, 0.91, -0.5),
-    // new Vector3(0.25, 8.5, 2.501),
-    new Vector3(0.25, 0.92, -0.5),
-    // new Vector3(0, 8.515, 2.502),
-];
-
-const opponentHeroCardsRotations = [
-    new Vector3(Math.PI / 2, 0, 3.2),
-    // new Vector3(2 * Math.PI, Math.PI, 0.15),
-    new Vector3(Math.PI / 2, 0, 3.2),
-    // new Vector3(2 * Math.PI, Math.PI, 0.10),
-    new Vector3(Math.PI / 2, 0, 3.2),
-    // new Vector3(2 * Math.PI, Math.PI, 0),
-];
-
 let maximum2 = opponentCardsPositions.length - 1;
 let randomNumber2 = Math.floor(Math.random() * (maximum2 - minimum + 1)) + minimum;
 
@@ -312,5 +303,83 @@ maximum2 = opponentCardsPositions.length - 1;
 randomNumber2 = Math.floor(Math.random() * (maximum2 - minimum + 1)) + minimum;
 configureCard(card10, opponentCardsPositions, opponentCardsRotations, randomNumber2, 'citizen');
 
-export {CARDS, emperorTexture, slaveTexture}
+export {CARDS, emperorTexture, slaveTexture};
 
+const HEROCARDS = [];
+//позиционирование карточек
+const myHeroCardsPositions = [
+    new Vector3 (0.75, 0.9, -3.5),
+    // new Vector3 (0.5, 6.004, 4.21),
+    new Vector3 (0.5, 0.91, -3.5),
+    // new Vector3 (0.25, 6.003, 4.17),
+    new Vector3 (0.25, 0.92, -3.5),
+    // new Vector3 (0, 6.002, 4.15),
+];
+//поворот карточек
+const myHeroCardsRotations = [
+    new Vector3(-Math.PI / 2, 0, 3.1),
+    // new Vector3(-Math.PI / 2, 0, -0.15),
+    new Vector3(-Math.PI / 2, 0, 3.1),
+    // new Vector3(-Math.PI / 2, 0, -0.10),
+    new Vector3(-Math.PI / 2, 0, 3.1),
+    // new Vector3(-Math.PI / 2, 0, 0),
+];
+//конфигурируем карточки героев игрока
+let maximum3 = myHeroCardsPositions.length -1;
+let randomNumber3 = Math.floor(Math.random() * (maximum3 - minimum + 1)) + minimum;
+//конфигурируем карточки героев
+const myHeroCard1 = new Mesh(cardGeo, card1Hero);
+configureCard(myHeroCard1, myHeroCardsPositions, myHeroCardsRotations, randomNumber3, 'hand playerHeroCard1 hero1');
+
+const myHeroCard2 = new Mesh(cardGeo, card2Hero);
+maximum3 = myHeroCardsPositions.length -1;
+randomNumber3 = Math.floor(Math.random() * (maximum3 - minimum + 1)) + minimum;
+configureCard(myHeroCard2, myHeroCardsPositions, myHeroCardsRotations, randomNumber3, 'hand playerHeroCard2 hero2');
+
+const myHeroCard3 = new Mesh(cardGeo, card3Hero);
+maximum3 = myHeroCardsPositions.length -1;
+randomNumber3 = Math.floor(Math.random() * (maximum3 - minimum + 1)) + minimum;
+configureCard(myHeroCard3, myHeroCardsPositions, myHeroCardsRotations, randomNumber3, 'hand playerHeroCard3 hero3');
+
+const opponentHeroCardsPositions = [
+    new Vector3(0.75, 0.9, -1.5),
+    // new Vector3(0.5, 8.47, 2.5),
+    new Vector3(0.5, 0.91, -1.5),
+    // new Vector3(0.25, 8.5, 2.501),
+    new Vector3(0.25, 0.92, -1.5),
+    // new Vector3(0, 8.515, 2.502),
+];
+
+const opponentHeroCardsRotations = [
+    new Vector3(-Math.PI / 2, 0, 3.2),
+    // new Vector3(2 * Math.PI, Math.PI, 0.15),
+    new Vector3(-Math.PI / 2, 0, 3.2),
+    // new Vector3(2 * Math.PI, Math.PI, 0.10),
+    new Vector3(-Math.PI / 2, 0, 3.2),
+    // new Vector3(2 * Math.PI, Math.PI, 0),
+];
+
+//конфигурируем карточки героев противника
+let maximum4 = opponentHeroCardsPositions.length -1;
+let randomNumber4 = Math.floor(Math.random() * (maximum4 - minimum + 1)) + minimum;
+//конфигурируем карточки героев
+const opponentHeroCard1 = new Mesh(cardGeo, card4Hero);
+configureCard(opponentHeroCard1, opponentHeroCardsPositions, opponentHeroCardsRotations, randomNumber3, 'hero4');
+
+const opponentHeroCard2 = new Mesh(cardGeo, card5Hero);
+maximum4 = myHeroCardsPositions.length -1;
+randomNumber4 = Math.floor(Math.random() * (maximum4 - minimum + 1)) + minimum;
+configureCard(opponentHeroCard2, opponentHeroCardsPositions, opponentHeroCardsRotations, randomNumber3, 'hhero5');
+
+const opponentHeroСard3 = new Mesh(cardGeo, card6Hero);
+maximum4 = myHeroCardsPositions.length -1;
+randomNumber4 = Math.floor(Math.random() * (maximum4 - minimum + 1)) + minimum;
+configureCard(opponentHeroСard3, opponentHeroCardsPositions, opponentHeroCardsRotations, randomNumber3, 'hero6');
+
+export {HEROCARDS, 
+    myHero1Texture, 
+    myHero2Texture, 
+    myHero3Texture, 
+    opponentHero1Texture, 
+    opponentHero2Texture, 
+    opponentHero3Texture}

@@ -314,3 +314,4 @@ configureCard(card10, opponentCardsPositions, opponentCardsRotations, randomNumb
 
 export {CARDS, emperorTexture, slaveTexture}
 
+// проверка merge into current branch

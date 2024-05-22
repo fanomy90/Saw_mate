@@ -369,7 +369,7 @@ configureCard(opponentHeroCard1, opponentHeroCardsPositions, opponentHeroCardsRo
 const opponentHeroCard2 = new Mesh(cardGeo, card5Hero);
 maximum4 = myHeroCardsPositions.length -1;
 randomNumber4 = Math.floor(Math.random() * (maximum4 - minimum + 1)) + minimum;
-configureCard(opponentHeroCard2, opponentHeroCardsPositions, opponentHeroCardsRotations, randomNumber3, 'hhero5');
+configureCard(opponentHeroCard2, opponentHeroCardsPositions, opponentHeroCardsRotations, randomNumber3, 'hero5');
 
 const opponentHeroСard3 = new Mesh(cardGeo, card6Hero);
 maximum4 = myHeroCardsPositions.length -1;
@@ -383,3 +383,4 @@ export {HEROCARDS,
     opponentHero1Texture, 
     opponentHero2Texture, 
     opponentHero3Texture}
+

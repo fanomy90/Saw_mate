@@ -97,7 +97,7 @@ audioLoader.load(card_flip_audioPaths, function(buffer) {
     cardFlip.setBuffer(buffer);
     cardFlip.setVolume(2);
 });
-
+//игра со светом
 const directionalLight = new THREE.DirectionalLight(0xFFFFFF, 0.8);
 directionalLight.position.y = 10;
 scene.add(directionalLight);
@@ -167,14 +167,14 @@ function showResult() {
         rematch.style.display = 'inline';
     }
 }
-
+//перемешивание элементов массива
 function shuffleArray(array) {
     for(let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [array[i], array[j]] = [array[j], array[i]];
     }
 }
-
+//обновление раунда игры
 function resetAndUpdate(side, sideText) {
 
     x = -2;

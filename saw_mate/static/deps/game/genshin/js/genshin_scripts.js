@@ -9,6 +9,11 @@ const audioPaths = document.getElementById('audio-paths');
 const card_drop_audioPaths = audioPaths.dataset.card_drop;
 const card_flip_audioPaths = audioPaths.dataset.card_flip;
 
+// Получение кнопок
+const btnAnimate1 = document.getElementById('btn-animate1');
+const btnAnimate2 = document.getElementById('btn-animate2');
+const btnAnimate3 = document.getElementById('btn-animate3');
+
 //добавляем загрузчик 3д моделей
 const gltfLoader = new GLTFLoader();
 
@@ -24,20 +29,20 @@ for(let i = 5; i < CARDS.length; i++) {
     opponentCards.push(CARDS[i]);
 }
 //формируем набор карт героев противника
-// const opponentHeroCards = [];
-// for(let i = 3; i < HEROCARDS.length; i++) {
-//     opponentHeroCards.push(HEROCARDS[i]);
-// }
+const opponentHeroCards = [];
+for(let i = 3; i < HEROCARDS.length; i++) {
+    opponentHeroCards.push(HEROCARDS[i]);
+}
 //формируем набор карт игрока
 const playerCards = [];
 for(let i = 0; i < 5; i++) {
     playerCards.push(CARDS[i]);
 }
 //формируем набор карт героев противника
-// const playerHeroCards = [];
-// for(let i = 3; i < HEROCARDS.length; i++) {
-//     playerHeroCards.push(HEROCARDS[i]);
-// }
+const playerHeroCards = [];
+for(let i = 3; i < HEROCARDS.length; i++) {
+    playerHeroCards.push(HEROCARDS[i]);
+}
 //объявляем константы для позиции и вращения карт
 const initialCardsPositions = [];
 const initialCardsRotations = [];
@@ -79,10 +84,9 @@ const sceneBox = document.getElementById('scene-box');
 sceneBox.appendChild(renderer.domElement);
 
 //белый фон
-// Sets the color of the background
-// renderer.setClearColor(0xFEFEFE);
-// renderer.shadowMap.enabled = true;
-// renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.setClearColor(0xFEFEFE);
+renderer.shadowMap.enabled = true;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
 
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(
@@ -138,9 +142,10 @@ gltfLoader.load(staticUrl, function(glb) {
     });
 });
 //сетка Sets a 12 by 12 gird helper
-// const gridHelper = new THREE.GridHelper(12, 12);
-// scene.add(gridHelper);
+const gridHelper = new THREE.GridHelper(12, 12);
+scene.add(gridHelper);
 
+//добавление карточек из массива CARDS на сцену
 CARDS.forEach(function(card) {
     scene.add(card);
     const v = new THREE.Vector3();
@@ -148,6 +153,7 @@ CARDS.forEach(function(card) {
     initialCardsPositions.push(v);
     initialCardsRotations.push(card.rotation.z);
 });
+//добавление карточек из массива HEROCARDS на сцену
 HEROCARDS.forEach(function(card) {
     scene.add(card);
     const v = new THREE.Vector3();
@@ -155,7 +161,7 @@ HEROCARDS.forEach(function(card) {
     initialHeroCardsPositions.push(v);
     initialHeroCardsRotations.push(card.rotation.z);
 });
-
+// обработка нового раунда
 function nextRound() {
     if(CARDS[0].name === 'hand playerCard1 emperor') {
         CARDS[0].material[4].map = slaveTexture;
@@ -174,7 +180,6 @@ function nextRound() {
         p1.style.background = 'linear-gradient(90deg, rgba(83, 0, 0, 0.8) 0%, rgba(255, 255, 255, 0) 100%)';
     }
 }
-
 //отображение результата игры и кнопки повторить игру
 function showResult() {
     if(playerScore > opponentScore) {
@@ -190,7 +195,6 @@ function showResult() {
         rematch.style.display = 'inline';
     }
 }
-
 //перемешивание элементов массива
 function shuffleArray(array) {
     for(let i = array.length - 1; i > 0; i--) {
@@ -198,7 +202,6 @@ function shuffleArray(array) {
         [array[i], array[j]] = [array[j], array[i]];
     }
 }
-
 //обновление раунда игры
 function resetAndUpdate(side, sideText) {
 
@@ -235,6 +238,21 @@ function resetAndUpdate(side, sideText) {
 
         CARDS[i].name = 'hand ' + CARDS[i].name;
     }
+    //инициализация карточек героев
+    for(let i = 0; i < 3; i++) {
+        playerHeroCards[i] = arr1[i];
+        playerHeroCards[i].position.copy(initialCardsPositions[i]);
+        playerHeroCards[i].rotation.set(-Math.PI / 2, 0, initialCardsRotations[i]);
+        playerHeroCards[i].scale.set(1, 1, 1);
+
+        opponentHeroCards[i] = arr2[i];
+        opponentHeroCards[i].position.copy(initialCardsPositions[i + 3]);
+        opponentHeroCards[i].rotation.set(Math.PI * 2, Math.PI, initialCardsRotations[i + 3]);
+        opponentHeroCards[i].scale.set(1, 1, 1);
+
+        HEROCARDS[i].name = 'hand ' + HEROCARDS[i].name;
+    }
+    //обработка событий раундов игры
     if(round === 4)
         nextRound();
     else if(round === 7) {
@@ -242,7 +260,6 @@ function resetAndUpdate(side, sideText) {
         showResult();
     }
 }
-
 // Создаем объект для представления указателя мыши для отладки
 const mousePointerGeometry = new THREE.CircleGeometry(0.05, 32);
 const mousePointerMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
@@ -254,6 +271,114 @@ window.addEventListener('mousemove', function(e) {
     const mousePositionX = (e.clientX / window.innerWidth) * 2 - 1;
     const mousePositionY = -(e.clientY / window.innerHeight) * 2 + 1;
     mousePointer.position.set(mousePositionX, mousePositionY, 0);
+});
+
+//моя тестовая анимация для работы с карточками героев
+// Добавление обработчиков событий для кнопок
+btnAnimate1.addEventListener('click', function() {
+    // Пример анимации для кнопки 1
+    console.log('btnAnimate1');
+    const animatedCard = HEROCARDS[0]; // Выбираем первую карточку для примера
+    //создаем таймлайн с настройками по умолчанию
+    const t1 = gsap.timeline({
+        defaults: {duration: 0.4, delay: 0.1}
+    });
+    //вперед
+    t1.to(animatedCard.position, { y: 0.96, z: -3.8 })
+    .to(animatedCard.rotation, { z: 3.5 }, 0)
+    .to(animatedCard.scale, { x: 1.5, y: 1.5, z: 1.5 }, 0)
+    .to(animatedCard.position, { z: -2.4 }, 0.4)
+    //обратно
+    .to(animatedCard.rotation, { z: 3.1 }, 0.8)
+    .to(animatedCard.scale, { x: 1, y: 1, z: 1 }, 0.8)
+    .to(animatedCard.position, { y: 0.9, z: -3.5 }, 0.8);
+    console.log('btnAnimate1 clicked and animation started');
+
+    //карта героя оппонента
+    const animatedCard2 = HEROCARDS[3]; // Выбираем первую карточку для примера
+    const t2 = gsap.timeline({
+        defaults: {duration: 0.4, delay: 0.1}
+    });
+    //вперед
+    t2.to(animatedCard2.position, { y: 0.92}, 0)
+    .to(animatedCard2.rotation, { z: 3 }, 0)
+    .to(animatedCard2.scale, { x: 1.5, y: 1.5, z: 1.5 }, 0)
+    .to(animatedCard2.position, { z: -2.4 }, 0.4)
+    //обратно
+    .to(animatedCard2.rotation, { z: 3.2 }, 0.8)
+    .to(animatedCard2.scale, { x: 1, y: 1, z: 1 }, 0.8)
+    .to(animatedCard2.position, { y: 0.9, z: -1.5 }, 0.8);
+    console.log('btnAnimate1 clicked and animation started');
+});
+
+btnAnimate2.addEventListener('click', function() {
+    // Пример анимации для кнопки 2
+    console.log('btnAnimate2');
+    const animatedCard = HEROCARDS[1]; // Выбираем первую карточку для примера
+    //создаем таймлайн с настройками по умолчанию
+    const t1 = gsap.timeline({
+        defaults: {duration: 0.4, delay: 0.1}
+    });
+    //вперед
+    t1.to(animatedCard.position, { y: 0.96, z: -3.8 })
+    .to(animatedCard.rotation, { z: 3.5 }, 0)
+    .to(animatedCard.scale, { x: 1.5, y: 1.5, z: 1.5 }, 0)
+    .to(animatedCard.position, { z: -2.4 }, 0.4)
+    //обратно
+    .to(animatedCard.rotation, { z: 3.1 }, 0.8)
+    .to(animatedCard.scale, { x: 1, y: 1, z: 1 }, 0.8)
+    .to(animatedCard.position, { y: 0.91, z: -3.5 }, 0.8);
+
+    //карта героя оппонента
+    const animatedCard2 = HEROCARDS[4]; // Выбираем первую карточку для примера
+    const t2 = gsap.timeline({
+        defaults: {duration: 0.4, delay: 0.1}
+    });
+    //вперед
+    t2.to(animatedCard2.position, { y: 0.94}, 0)
+    .to(animatedCard2.rotation, { z: 3 }, 0)
+    .to(animatedCard2.scale, { x: 1.5, y: 1.5, z: 1.5 }, 0)
+    .to(animatedCard2.position, { z: -2.4 }, 0.4)
+    //обратно
+    .to(animatedCard2.rotation, { z: 3.2 }, 0.8)
+    .to(animatedCard2.scale, { x: 1, y: 1, z: 1 }, 0.8)
+    .to(animatedCard2.position, { y: 0.91, z: -1.5 }, 0.8);
+    console.log('btnAnimate2 clicked and animation started');
+});
+
+btnAnimate3.addEventListener('click', function() {
+    // Пример анимации для кнопки 3
+    console.log('btnAnimate3');
+    const animatedCard = HEROCARDS[2]; // Выбираем первую карточку для примера
+    //создаем таймлайн с настройками по умолчанию
+    const t1 = gsap.timeline({
+        defaults: {duration: 0.4, delay: 0.1}
+    });
+    //вперед
+    t1.to(animatedCard.position, { y: 0.96, z: -3.8 })
+    .to(animatedCard.rotation, { z: 3.5 }, 0)
+    .to(animatedCard.scale, { x: 1.5, y: 1.5, z: 1.5 }, 0)
+    .to(animatedCard.position, { z: -2.4 }, 0.4)
+    //обратно
+    .to(animatedCard.rotation, { z: 3.1 }, 0.8)
+    .to(animatedCard.scale, { x: 1, y: 1, z: 1 }, 0.8)
+    .to(animatedCard.position, { y: 0.92, z: -3.5 }, 0.8);
+
+    //карта героя оппонента
+    const animatedCard2 = HEROCARDS[5]; // Выбираем первую карточку для примера
+    const t2 = gsap.timeline({
+        defaults: {duration: 0.4, delay: 0.1}
+    });
+    //вперед
+    t2.to(animatedCard2.position, { y: 0.94}, 0)
+    .to(animatedCard2.rotation, { z: 3 }, 0)
+    .to(animatedCard2.scale, { x: 1.5, y: 1.5, z: 1.5 }, 0)
+    .to(animatedCard2.position, { z: -2.4 }, 0.4)
+    //обратно
+    .to(animatedCard2.rotation, { z: 3.2 }, 0.8)
+    .to(animatedCard2.scale, { x: 1, y: 1, z: 1 }, 0.8)
+    .to(animatedCard2.position, { y: 0.92, z: -1.5 }, 0.8);
+    console.log('btnAnimate3 clicked and animation started');
 });
 
 //анимация
@@ -284,6 +409,7 @@ window.addEventListener('click', function(e) {
         .to(hoveredCard.position, { y: 0.91, z: -2.9, x }, 0)
         // .to(hoveredCard.position, { y: 3.18, z: 0.9, x }, 0)
         .to(hoveredCard.scale, { x: 1.5, y: 1.5, z: 1.5 }, 0)
+        // .to(hoveredCard.scale, { x: 1.5, y: 1.5, z: 1.5 }, 0)
         .to(hoveredCard.rotation, { y: 0, delay: 1,
             //запуск звука
             onComplete: function() {

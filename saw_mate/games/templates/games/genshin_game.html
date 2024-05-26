@@ -77,12 +77,34 @@
         data-cover = "{% static 'deps/js/assets/card2.png' %}"
         data-emperor = "{% static 'deps/js/assets/emperor.png' %}"
         data-slave = "{% static 'deps/js/assets/slave.png' %}"
+
+        data-hero1 = "{% static 'deps/game/genshin/assets/hero1.jpg' %}"
+        data-hero2 = "{% static 'deps/game/genshin/assets/hero2.jpg' %}"
+        data-hero3 = "{% static 'deps/game/genshin/assets/hero3.jpg' %}"
+
+        data-hero4 = "{% static 'deps/game/genshin/assets/hero4.jpg' %}"
+        data-hero5 = "{% static 'deps/game/genshin/assets/hero5.jpg' %}"
+        data-hero6 = "{% static 'deps/game/genshin/assets/hero6.jpg' %}"
+
     ></div>
     <!--передача звука в скрипт-->
     <div id="audio-paths" style="display: none;"
         data-card_drop = "{% static 'deps/js/assets/card_drop.mp3' %}"
         data-card_flip = "{% static 'deps/js/assets/card_flip.mp3' %}"
     ></div>
+    <br>
+    <!--игровые кнопки для запуска анимаций-->
+    <button type="submit" class="btn btn-dark" id="btn-animate1">Анимация 1</button>
+    <br>
+    <button type="submit" class="btn btn-dark" i id="btn-animate2">Анимация 2</button>
+    <br>
+    <button type="submit" class="btn btn-dark" i id="btn-animate3">Анимация 3</button>
+    <br>
+    <div id="game-button"
+        
+    ></div>
+
+    
 {% endblock  %}
 
 {% block footer %}

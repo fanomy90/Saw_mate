@@ -26,14 +26,14 @@ const emperorTexturePath = texturePaths.dataset.emperor;
 const slaveTexturePath = texturePaths.dataset.slave;
 
 //карточки игрока
-const myHero1TexturePath = texturePaths.dataset.emperor;
-const myHero2TexturePath = texturePaths.dataset.emperor;
-const myHero3TexturePath = texturePaths.dataset.emperor;
+const myHero1TexturePath = texturePaths.dataset.hero1;
+const myHero2TexturePath = texturePaths.dataset.hero2;
+const myHero3TexturePath = texturePaths.dataset.hero3;
 
 //карточки противника
-const opponentHero1TexturePath = texturePaths.dataset.slave;
-const opponentHero2TexturePath = texturePaths.dataset.slave;
-const opponentHero3TexturePath = texturePaths.dataset.slave;
+const opponentHero1TexturePath = texturePaths.dataset.hero4;;
+const opponentHero2TexturePath = texturePaths.dataset.hero5;;
+const opponentHero3TexturePath = texturePaths.dataset.hero6;;
 
 
 const citizen1Texture = textureLoader.load(citizen1TexturePath);
@@ -213,14 +213,15 @@ const myCardsRotations = [
 ];
 
 //добавление свойств карточке
-function configureCard(card, pos, rot, rNumb, name) {
+function configureCard(card, pos, rot, rNumb, name, targetArray) {
     card.name = name; //имя карточки
     card.castShadow = true; //включение теней
     card.position.copy(pos[rNumb]); //установка позиции карточки
     card.rotation.set(rot[rNumb].x, rot[rNumb].y, rot[rNumb].z); // установка вращения
     pos.splice(rNumb, 1); //удаление позиции карточки
     rot.splice(rNumb, 1); // удаление вращения
-    CARDS.push(card); // добавление карточки в массив
+    //CARDS.push(card); // добавление карточки в массив CARDS
+    targetArray.push(card); // добавляем карточку в массив указнный в targetArray 
 }
 //генерация массива случайных чисел по координатам карточек
 const minimum = 0;
@@ -229,27 +230,27 @@ let maximum1 = myCardsPositions.length - 1;
 let randomNumber1 = Math.floor(Math.random() * (maximum1 - minimum + 1)) + minimum;
 // конфигурирование карточек
 const card1 = new Mesh(cardGeo, card1Mat);
-configureCard(card1, myCardsPositions, myCardsRotations, randomNumber1, 'hand playerCard1 emperor');
+configureCard(card1, myCardsPositions, myCardsRotations, randomNumber1, 'hand playerCard1 emperor', CARDS);
 
 const card2 = new Mesh(cardGeo, card2Mat);
 maximum1 = myCardsPositions.length - 1;
 randomNumber1 = Math.floor(Math.random() * (maximum1 - minimum + 1)) + minimum;
-configureCard(card2, myCardsPositions, myCardsRotations, randomNumber1, 'hand playerCard2 citizen');
+configureCard(card2, myCardsPositions, myCardsRotations, randomNumber1, 'hand playerCard2 citizen', CARDS);
 
 const card3 = new Mesh(cardGeo, card3Mat);
 maximum1 = myCardsPositions.length - 1;
 randomNumber1 = Math.floor(Math.random() * (maximum1 - minimum + 1)) + minimum;
-configureCard(card3, myCardsPositions, myCardsRotations, randomNumber1, 'hand playerCard3 citizen');
+configureCard(card3, myCardsPositions, myCardsRotations, randomNumber1, 'hand playerCard3 citizen', CARDS);
 
 const card4 = new Mesh(cardGeo, card4Mat);
 maximum1 = myCardsPositions.length - 1;
 randomNumber1 = Math.floor(Math.random() * (maximum1 - minimum + 1)) + minimum;
-configureCard(card4, myCardsPositions, myCardsRotations, randomNumber1, 'hand playerCard4 citizen');
+configureCard(card4, myCardsPositions, myCardsRotations, randomNumber1, 'hand playerCard4 citizen', CARDS);
 
 const card5 = new Mesh(cardGeo, card5Mat);
 maximum1 = myCardsPositions.length - 1;
 randomNumber1 = Math.floor(Math.random() * (maximum1 - minimum + 1)) + minimum;
-configureCard(card5, myCardsPositions, myCardsRotations, randomNumber1, 'hand playerCard5 citizen');
+configureCard(card5, myCardsPositions, myCardsRotations, randomNumber1, 'hand playerCard5 citizen', CARDS);
 
 const opponentCardsPositions = [
     new Vector3(0.75, 0.9, -0.5),
@@ -265,15 +266,15 @@ const opponentCardsPositions = [
 ];
 
 const opponentCardsRotations = [
-    new Vector3(Math.PI / 2, 0, 3.2),
+    new Vector3(-Math.PI / 2, 0, 3.2),
     // new Vector3(2 * Math.PI, Math.PI, 0.15),
-    new Vector3(Math.PI / 2, 0, 3.2),
+    new Vector3(-Math.PI / 2, 0, 3.2),
     // new Vector3(2 * Math.PI, Math.PI, 0.10),
-    new Vector3(Math.PI / 2, 0, 3.2),
+    new Vector3(-Math.PI / 2, 0, 3.2),
     // new Vector3(2 * Math.PI, Math.PI, 0),
-    new Vector3(Math.PI / 2, 0, 3.2),
+    new Vector3(-Math.PI / 2, 0, 3.2),
     // new Vector3(2 * Math.PI, Math.PI, -0.10),
-    new Vector3(Math.PI / 2, 0, 3.2),
+    new Vector3(-Math.PI / 2, 0, 3.2),
     // new Vector3(2 * Math.PI, Math.PI, -0.15),
 ];
 
@@ -281,27 +282,27 @@ let maximum2 = opponentCardsPositions.length - 1;
 let randomNumber2 = Math.floor(Math.random() * (maximum2 - minimum + 1)) + minimum;
 
 const card6 = new Mesh(cardGeo, card6Mat);
-configureCard(card6, opponentCardsPositions, opponentCardsRotations, randomNumber2, 'slave');
+configureCard(card6, opponentCardsPositions, opponentCardsRotations, randomNumber2, 'slave', CARDS);
 
 const card7 = new Mesh(cardGeo, card2Mat);
 maximum2 = opponentCardsPositions.length - 1;
 randomNumber2 = Math.floor(Math.random() * (maximum2 - minimum + 1)) + minimum;
-configureCard(card7, opponentCardsPositions, opponentCardsRotations, randomNumber2, 'citizen');
+configureCard(card7, opponentCardsPositions, opponentCardsRotations, randomNumber2, 'citizen', CARDS);
 
 const card8 = new Mesh(cardGeo, card3Mat);
 maximum2 = opponentCardsPositions.length - 1;
 randomNumber2 = Math.floor(Math.random() * (maximum2 - minimum + 1)) + minimum;
-configureCard(card8, opponentCardsPositions, opponentCardsRotations, randomNumber2, 'citizen');
+configureCard(card8, opponentCardsPositions, opponentCardsRotations, randomNumber2, 'citizen', CARDS);
 
 const card9 = new Mesh(cardGeo, card4Mat);
 maximum2 = opponentCardsPositions.length - 1;
 randomNumber2 = Math.floor(Math.random() * (maximum2 - minimum + 1)) + minimum;
-configureCard(card9, opponentCardsPositions, opponentCardsRotations, randomNumber2, 'citizen');
+configureCard(card9, opponentCardsPositions, opponentCardsRotations, randomNumber2, 'citizen', CARDS);
 
 const card10 = new Mesh(cardGeo, card5Mat);
 maximum2 = opponentCardsPositions.length - 1;
 randomNumber2 = Math.floor(Math.random() * (maximum2 - minimum + 1)) + minimum;
-configureCard(card10, opponentCardsPositions, opponentCardsRotations, randomNumber2, 'citizen');
+configureCard(card10, opponentCardsPositions, opponentCardsRotations, randomNumber2, 'citizen', CARDS);
 
 export {CARDS, emperorTexture, slaveTexture};
 
@@ -329,17 +330,17 @@ let maximum3 = myHeroCardsPositions.length -1;
 let randomNumber3 = Math.floor(Math.random() * (maximum3 - minimum + 1)) + minimum;
 //конфигурируем карточки героев
 const myHeroCard1 = new Mesh(cardGeo, card1Hero);
-configureCard(myHeroCard1, myHeroCardsPositions, myHeroCardsRotations, randomNumber3, 'hand playerHeroCard1 hero1');
+configureCard(myHeroCard1, myHeroCardsPositions, myHeroCardsRotations, randomNumber3, 'hand playerHeroCard1 hero1', HEROCARDS);
 
 const myHeroCard2 = new Mesh(cardGeo, card2Hero);
 maximum3 = myHeroCardsPositions.length -1;
 randomNumber3 = Math.floor(Math.random() * (maximum3 - minimum + 1)) + minimum;
-configureCard(myHeroCard2, myHeroCardsPositions, myHeroCardsRotations, randomNumber3, 'hand playerHeroCard2 hero2');
+configureCard(myHeroCard2, myHeroCardsPositions, myHeroCardsRotations, randomNumber3, 'hand playerHeroCard2 hero2', HEROCARDS);
 
 const myHeroCard3 = new Mesh(cardGeo, card3Hero);
 maximum3 = myHeroCardsPositions.length -1;
 randomNumber3 = Math.floor(Math.random() * (maximum3 - minimum + 1)) + minimum;
-configureCard(myHeroCard3, myHeroCardsPositions, myHeroCardsRotations, randomNumber3, 'hand playerHeroCard3 hero3');
+configureCard(myHeroCard3, myHeroCardsPositions, myHeroCardsRotations, randomNumber3, 'hand playerHeroCard3 hero3', HEROCARDS);
 
 const opponentHeroCardsPositions = [
     new Vector3(0.75, 0.9, -1.5),
@@ -364,17 +365,17 @@ let maximum4 = opponentHeroCardsPositions.length -1;
 let randomNumber4 = Math.floor(Math.random() * (maximum4 - minimum + 1)) + minimum;
 //конфигурируем карточки героев
 const opponentHeroCard1 = new Mesh(cardGeo, card4Hero);
-configureCard(opponentHeroCard1, opponentHeroCardsPositions, opponentHeroCardsRotations, randomNumber3, 'hero4');
+configureCard(opponentHeroCard1, opponentHeroCardsPositions, opponentHeroCardsRotations, randomNumber3, 'hero4', HEROCARDS);
 
 const opponentHeroCard2 = new Mesh(cardGeo, card5Hero);
 maximum4 = myHeroCardsPositions.length -1;
 randomNumber4 = Math.floor(Math.random() * (maximum4 - minimum + 1)) + minimum;
-configureCard(opponentHeroCard2, opponentHeroCardsPositions, opponentHeroCardsRotations, randomNumber3, 'hero5');
+configureCard(opponentHeroCard2, opponentHeroCardsPositions, opponentHeroCardsRotations, randomNumber3, 'hero5', HEROCARDS);
 
 const opponentHeroСard3 = new Mesh(cardGeo, card6Hero);
 maximum4 = myHeroCardsPositions.length -1;
 randomNumber4 = Math.floor(Math.random() * (maximum4 - minimum + 1)) + minimum;
-configureCard(opponentHeroСard3, opponentHeroCardsPositions, opponentHeroCardsRotations, randomNumber3, 'hero6');
+configureCard(opponentHeroСard3, opponentHeroCardsPositions, opponentHeroCardsRotations, randomNumber3, 'hero6', HEROCARDS);
 
 export {HEROCARDS, 
     myHero1Texture, 

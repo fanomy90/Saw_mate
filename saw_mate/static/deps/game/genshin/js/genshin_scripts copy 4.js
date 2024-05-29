@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { CARDS, emperorTexture, slaveTexture } from './genshin_hero_card.js';
-import { HEROCARDS, textOnBackgroundTexture, myHero2Texture, myHero3Texture, opponentHero1Texture, opponentHero2Texture, opponentHero3Texture } from './genshin_hero_card.js';
+import { HEROCARDS, myHero1Texture, myHero2Texture, myHero3Texture, opponentHero1Texture, opponentHero2Texture, opponentHero3Texture } from './genshin_hero_card.js';
 
 //Получаем пути к текстурам из атрибутов элемента
 const audioPaths = document.getElementById('audio-paths');

@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { CARDS, emperorTexture, slaveTexture } from './genshin_hero_card.js';
-import { HEROCARDS, textOnBackgroundTexture, myHero2Texture, myHero3Texture, opponentHero1Texture, opponentHero2Texture, opponentHero3Texture } from './genshin_hero_card.js';
+import { HEROCARDS, myHero1Texture, myHero2Texture, myHero3Texture, opponentHero1Texture, opponentHero2Texture, opponentHero3Texture } from './genshin_hero_card.js';
 
 //Получаем пути к текстурам из атрибутов элемента
 const audioPaths = document.getElementById('audio-paths');
@@ -10,7 +10,6 @@ const card_drop_audioPaths = audioPaths.dataset.card_drop;
 const card_flip_audioPaths = audioPaths.dataset.card_flip;
 
 // Получение кнопок
-const btnSwitchHero1 = document.getElementById('btn-switchHero1');
 const btnAnimate1 = document.getElementById('btn-animate1');
 const btnAnimate2 = document.getElementById('btn-animate2');
 const btnAnimate3 = document.getElementById('btn-animate3');
@@ -275,49 +274,7 @@ window.addEventListener('mousemove', function(e) {
 });
 
 //моя тестовая анимация для работы с карточками героев
-//позиции для циклической смены карточек героев
-const positions = [
-    { position: { x: 0, y: 0.9, z: -3.8 }, rotation: { y: 0, z: 3.2 }, scale: { x: 1, y: 1, z: 1 } },
-    { position: { x: 0.25, y: 1, z: -3.3 }, rotation: { y: 0, z: 3.1 }, scale: { x: 1.2, y: 1.2, z: 1.2 } },
-    { position: { x: 0.5, y: 0.91, z: -3.8 }, rotation: { y: 0, z: 3.1 }, scale: { x: 1, y: 1, z: 1 } }
-];
-//счетчик нажатия на кнопку смены героя
-let clickCount = 0;
 // Добавление обработчиков событий для кнопок
-// кнопка смены героя
-btnSwitchHero1.addEventListener('click', function() {
-    // Пример анимации для кнопки 1
-    //console.log('btnAnimate1');
-    //создаем таймлайн с настройками по умолчанию
-    const t1 = gsap.timeline({
-        defaults: {duration: 0.4, delay: 0.1}
-    });
-    //вперед
-    for (let i = 0; i < 3; i++) {
-        const animatedCard = HEROCARDS[i];
-        const positionIndex = (clickCount + i) % 3;
-
-        t1.to(animatedCard.position, {
-            x: positions[positionIndex].position.x,
-            y: positions[positionIndex].position.y,
-            z: positions[positionIndex].position.z
-        }, 0)
-        .to(animatedCard.rotation, {
-            y: positions[positionIndex].rotation.y,
-            z: positions[positionIndex].rotation.z
-        }, 0)
-        .to(animatedCard.scale, {
-            x: positions[positionIndex].scale.x,
-            y: positions[positionIndex].scale.y,
-            z: positions[positionIndex].scale.z
-        }, 0);
-    }
-
-    clickCount++;
-
-    console.log('btnSwitchHero1 clicked and animation started');
-});
-// Пример анимации для кнопки 1
 btnAnimate1.addEventListener('click', function() {
     // Пример анимации для кнопки 1
     console.log('btnAnimate1');

@@ -69,80 +69,34 @@ emperorTexture.colorSpace = SRGBColorSpace;
 const slaveTexture = textureLoader.load(slaveTexturePath);
 slaveTexture.colorSpace = SRGBColorSpace;
 
-function createTextTexture(text) {
-    const canvas = document.createElement('canvas');
-    const context = canvas.getContext('2d');
-    const size = 512; // Размер текстуры
+// function createTextTexture(text) {
+//     const canvas = document.createElement('canvas');
+//     const context = canvas.getContext('2d');
+//     const size = 512; // Размер текстуры
 
-    canvas.width = size;
-    canvas.height = size;
+//     canvas.width = size;
+//     canvas.height = size;
 
-    context.fillStyle = 'white'; // Цвет фона
-    context.fillRect(0, 0, size, size);
+//     context.fillStyle = 'white'; // Цвет фона
+//     context.fillRect(0, 0, size, size);
 
-    context.fillStyle = 'black'; // Цвет текста
-    context.font = 'bold 100px Arial';
-    context.textAlign = 'center';
-    context.textBaseline = 'middle';
-    context.fillText(text, size / 2, size / 2);
+//     context.fillStyle = 'black'; // Цвет текста
+//     context.font = 'bold 100px Arial';
+//     context.textAlign = 'center';
+//     context.textBaseline = 'middle';
+//     context.fillText(text, size / 2, size / 2);
 
-    const texture = new THREE.Texture(canvas);
-    texture.needsUpdate = true;
+//     const texture = new THREE.Texture(canvas);
+//     texture.needsUpdate = true;
     
-    return texture;
-}
-
-function createTextTextureWithBackground(text, backgroundImage) {
-    const canvas = document.createElement('canvas');
-    const context = canvas.getContext('2d');
-    const size = 512; // Размер текстуры
-
-    canvas.width = size;
-    canvas.height = size;
-
-    // Проверяем тип данных backgroundImage
-    if (backgroundImage instanceof HTMLImageElement || backgroundImage instanceof HTMLCanvasElement) {
-        // Рисуем изображение в качестве фона
-        context.drawImage(backgroundImage, 0, 0, size, size);
-    } else {
-        throw new Error('Background image must be an instance of HTMLImageElement or HTMLCanvasElement');
-    }
-
-    // Рисуем текст поверх изображения
-    context.fillStyle = 'black'; // Цвет текста
-    context.font = 'bold 100px Arial';
-    context.textAlign = 'center';
-    context.textBaseline = 'middle';
-    context.fillText(text, size / 2, size / 2);
-
-    const texture = new THREE.Texture(canvas);
-    texture.needsUpdate = true;
-    
-    return texture;
-}
+//     return texture;
+// }
 
 //карточки игрока загрузка текстур
 
-const backgroundTextureLoader = new THREE.TextureLoader();
+const myHero1Texture = textureLoader.load(myHero1TexturePath);
+myHero1Texture.colorSpace = SRGBColorSpace;
 
-let textOnBackgroundTexture; // Объявляем переменную заранее
-
-backgroundTextureLoader.load(myHero1TexturePath, function(texture) {
-    // Проверяем, что текстура загружена успешно
-    if (texture) {
-        // Создание текстуры с текстом на фоне загруженного изображения
-        textOnBackgroundTexture = createTextTextureWithBackground('Ваш текст', texture);
-    } else {
-        console.error('Failed to load background texture');
-        console.log('Тип данных backgroundTexture:', typeof backgroundTexture);
-    }
-});
-
-// Экспортируем textOnBackgroundTexture после завершения загрузки текстуры
-//export { textOnBackgroundTexture };
-
-
-//console.log('Тип данных backgroundTexture:', typeof backgroundTexture);
 
 const myHero2Texture = textureLoader.load(myHero2TexturePath);
 myHero2Texture.colorSpace = SRGBColorSpace;
@@ -218,8 +172,8 @@ const card1Hero = [
     new MeshBasicMaterial(),
     new MeshBasicMaterial(),
     //new MeshBasicMaterial({map: createTextTexture('0')}),
-    //new MeshBasicMaterial({map: myHero1Texture}),
-    new MeshBasicMaterial({map: textOnBackgroundTexture}),
+    new MeshBasicMaterial({map: myHero1Texture}),
+    //new MeshBasicMaterial({map: hero1LifeTexture}),
     new MeshBasicMaterial({map: coverTexture})
 ];
 
@@ -464,4 +418,4 @@ maximum4 = myHeroCardsPositions.length -1;
 randomNumber4 = Math.floor(Math.random() * (maximum4 - minimum + 1)) + minimum;
 configureCard(opponentHeroСard3, opponentHeroCardsPositions, opponentHeroCardsRotations, randomNumber3, 'hero6', HEROCARDS);
 
-export {HEROCARDS, textOnBackgroundTexture, myHero2Texture, myHero3Texture, opponentHero1Texture, opponentHero2Texture, opponentHero3Texture};
+export {HEROCARDS, myHero1Texture, myHero2Texture, myHero3Texture, opponentHero1Texture, opponentHero2Texture, opponentHero3Texture};

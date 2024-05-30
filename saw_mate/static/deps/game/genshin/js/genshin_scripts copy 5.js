@@ -409,7 +409,7 @@ btnAnimate1.addEventListener('click', function() {
     .to(myActiveCard.position, { z: -2.4 }, 0.4)
     //обратно
     .to(myActiveCard.rotation, { y: 0, z: 3.1 }, 0.8)
-    .to(myActiveCard.scale, { x: 1.2, y: 1.2, z: 1.2 }, 0.8)
+    .to(myActiveCard.scale, { x: 4, y: 4, z: 4 }, 0.8)
     .to(myActiveCard.position, { x: 0.25, y: 1, z: -3.3 }, 0.8);
 
     //карта героя оппонента
@@ -419,19 +419,21 @@ btnAnimate1.addEventListener('click', function() {
     });
     console.log('начало анимации 2');
     //вперед
-    t2.to(animatedCard2.position, { y: 0.92}, 0)
+    t2.to(animatedCard2.position, { y: 0.96, z: -1.7})
     .to(animatedCard2.rotation, { z: 3 }, 0)
     .to(animatedCard2.scale, { x: 1.5, y: 1.5, z: 1.5 }, 0)
     .to(animatedCard2.position, { z: -2.4 }, 0.4)
     //обратно
-    .to(animatedCard2.rotation, { z: 3.2 }, 0.8)
-    .to(animatedCard2.scale, { x: 1, y: 1, z: 1 }, 0.8)
-    .to(animatedCard2.position, { y: 0.9, z: -1.5 }, 0.8);
+    .to(animatedCard2.rotation, { y: 0, z: 3.1 }, 0.8)
+    .to(animatedCard2.scale, { x: 1.2, y: 1.2, z: 1.2 }, 0.8)
+    .to(animatedCard2.position, { x: 0.25, y: 1, z: -1.7 }, 0.8);
 
     } else {
         console.log('ошибка - не была выбрана активная карта перед началом раунда')
     }
 });
+
+//{ position: { x: 0.25, y: 1, z: -1.7 }, rotation: { y: 0, z: 3.1 }, scale: { x: 1.2, y: 1.2, z: 1.2 } },
 
 btnAnimate2.addEventListener('click', function() {
     // Пример анимации для кнопки 2

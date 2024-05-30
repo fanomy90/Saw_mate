@@ -9,9 +9,8 @@ import {
     Vector3,
     CanvasTexture
 } from 'three';
-
+//добавляем экземпляр загрузчика текстур
 const textureLoader = new TextureLoader();
-
 //создание объекта карточки с указанными размерами
 const cardGeo = new BoxGeometry(0.4, 0.6, 0.001);
 //проблема с доступам к файлам текстур из скрипта, нужно 
@@ -31,12 +30,6 @@ const coverTexturePath = texturePaths.dataset.cover;
 const emperorTexturePath = texturePaths.dataset.emperor;
 const slaveTexturePath = texturePaths.dataset.slave;
 
-//карточки игрока
-// const myHero1TexturePath = texturePaths.dataset.hero1;
-// // Проверка пути к текстуре
-// if (!myHero1TexturePath) {
-//     throw new Error('Hero1 texture path is invalid.');
-// }
 // Создаем текстуру с текстом
 const myHero1TexturePath = texturePaths.dataset.hero1;
 const myHero2TexturePath = texturePaths.dataset.hero2;
@@ -46,7 +39,6 @@ const myHero3TexturePath = texturePaths.dataset.hero3;
 const opponentHero1TexturePath = texturePaths.dataset.hero4;
 const opponentHero2TexturePath = texturePaths.dataset.hero5;
 const opponentHero3TexturePath = texturePaths.dataset.hero6;
-
 
 const citizen1Texture = textureLoader.load(citizen1TexturePath);
 citizen1Texture.colorSpace = SRGBColorSpace;
@@ -73,77 +65,22 @@ function createTextTexture(text) {
     const canvas = document.createElement('canvas');
     const context = canvas.getContext('2d');
     const size = 512; // Размер текстуры
-
     canvas.width = size;
     canvas.height = size;
-
     context.fillStyle = 'white'; // Цвет фона
     context.fillRect(0, 0, size, size);
-
     context.fillStyle = 'black'; // Цвет текста
     context.font = 'bold 100px Arial';
     context.textAlign = 'center';
     context.textBaseline = 'middle';
     context.fillText(text, size / 2, size / 2);
-
     const texture = new THREE.Texture(canvas);
     texture.needsUpdate = true;
-    
     return texture;
 }
-
-function createTextTextureWithBackground(text, backgroundImage) {
-    const canvas = document.createElement('canvas');
-    const context = canvas.getContext('2d');
-    const size = 512; // Размер текстуры
-
-    canvas.width = size;
-    canvas.height = size;
-
-    // Проверяем тип данных backgroundImage
-    if (backgroundImage instanceof HTMLImageElement || backgroundImage instanceof HTMLCanvasElement) {
-        // Рисуем изображение в качестве фона
-        context.drawImage(backgroundImage, 0, 0, size, size);
-    } else {
-        throw new Error('Background image must be an instance of HTMLImageElement or HTMLCanvasElement');
-    }
-
-    // Рисуем текст поверх изображения
-    context.fillStyle = 'black'; // Цвет текста
-    context.font = 'bold 100px Arial';
-    context.textAlign = 'center';
-    context.textBaseline = 'middle';
-    context.fillText(text, size / 2, size / 2);
-
-    const texture = new THREE.Texture(canvas);
-    texture.needsUpdate = true;
-    
-    return texture;
-}
-
-//карточки игрока загрузка текстур
-
-const backgroundTextureLoader = new THREE.TextureLoader();
-
-let textOnBackgroundTexture; // Объявляем переменную заранее
-
-backgroundTextureLoader.load(myHero1TexturePath, function(texture) {
-    // Проверяем, что текстура загружена успешно
-    if (texture) {
-        // Создание текстуры с текстом на фоне загруженного изображения
-        textOnBackgroundTexture = createTextTextureWithBackground('Ваш текст', texture);
-    } else {
-        console.error('Failed to load background texture');
-        console.log('Тип данных backgroundTexture:', typeof backgroundTexture);
-    }
-});
-
-// Экспортируем textOnBackgroundTexture после завершения загрузки текстуры
-//export { textOnBackgroundTexture };
-
-
-//console.log('Тип данных backgroundTexture:', typeof backgroundTexture);
-
+//Формируем текстуры лицевой части для карточек из картинок
+const myHero1Texture = textureLoader.load(myHero1TexturePath);
+myHero1Texture.colorSpace = SRGBColorSpace;
 const myHero2Texture = textureLoader.load(myHero2TexturePath);
 myHero2Texture.colorSpace = SRGBColorSpace;
 const myHero3Texture = textureLoader.load(myHero3TexturePath);
@@ -218,8 +155,7 @@ const card1Hero = [
     new MeshBasicMaterial(),
     new MeshBasicMaterial(),
     //new MeshBasicMaterial({map: createTextTexture('0')}),
-    //new MeshBasicMaterial({map: myHero1Texture}),
-    new MeshBasicMaterial({map: textOnBackgroundTexture}),
+    new MeshBasicMaterial({map: myHero1Texture}),
     new MeshBasicMaterial({map: coverTexture})
 ];
 
@@ -269,9 +205,8 @@ const card6Hero = [
     new MeshBasicMaterial({map: opponentHero3Texture}),
     new MeshBasicMaterial({map: coverTexture})
 ];
-
+//Объявляем массив для хранения карточек баффов
 const CARDS = [];
-
 //позиционирование карточек
 const myCardsPositions = [
     new Vector3 (0.75, 0.9, -4.5),
@@ -298,7 +233,6 @@ const myCardsRotations = [
     new Vector3(-Math.PI / 2, 0, 3.1),
     // new Vector3(-Math.PI / 2, 0, 0.15),
 ];
-
 //добавление свойств карточке
 function configureCard(card, pos, rot, rNumb, name, targetArray) {
     card.name = name; //имя карточки
@@ -315,6 +249,7 @@ const minimum = 0;
 let maximum1 = myCardsPositions.length - 1;
 //генерация случайного числа
 let randomNumber1 = Math.floor(Math.random() * (maximum1 - minimum + 1)) + minimum;
+
 // конфигурирование карточек
 const card1 = new Mesh(cardGeo, card1Mat);
 configureCard(card1, myCardsPositions, myCardsRotations, randomNumber1, 'hand playerCard1 emperor', CARDS);
@@ -339,6 +274,7 @@ maximum1 = myCardsPositions.length - 1;
 randomNumber1 = Math.floor(Math.random() * (maximum1 - minimum + 1)) + minimum;
 configureCard(card5, myCardsPositions, myCardsRotations, randomNumber1, 'hand playerCard5 citizen', CARDS);
 
+//описываем начальные координаты и положение карточек бафов опонента
 const opponentCardsPositions = [
     new Vector3(0.75, 0.9, -0.5),
     // new Vector3(0.5, 8.47, 2.5),
@@ -391,25 +327,27 @@ maximum2 = opponentCardsPositions.length - 1;
 randomNumber2 = Math.floor(Math.random() * (maximum2 - minimum + 1)) + minimum;
 configureCard(card10, opponentCardsPositions, opponentCardsRotations, randomNumber2, 'citizen', CARDS);
 
+//добавляем карточки баффов в массив
 export {CARDS, emperorTexture, slaveTexture};
 
+//Объявляем массив для хранения карточек героев
 const HEROCARDS = [];
 //позиционирование карточек
 const myHeroCardsPositions = [
-    new Vector3 (0.25, 0.9, -3.3),
+    new Vector3 (0.25, 0.9, -3.8),
     // new Vector3 (0.5, 6.004, 4.21),
-    new Vector3 (0.5, 0.91, -3.8),
+    new Vector3 (0.75, 0.91, -3.8),
     // new Vector3 (0.25, 6.003, 4.17),
-    new Vector3 (0, 0.92, -3.8),
+    new Vector3 (-0.25, 0.92, -3.8),
     // new Vector3 (0, 6.002, 4.15),
 ];
 //поворот карточек
 const myHeroCardsRotations = [
     new Vector3(-Math.PI / 2, 0, 3.15),
     // new Vector3(-Math.PI / 2, 0, -0.15),
-    new Vector3(-Math.PI / 2, 0, 3.1),
-    // new Vector3(-Math.PI / 2, 0, -0.10),
     new Vector3(-Math.PI / 2, 0, 3.2),
+    // new Vector3(-Math.PI / 2, 0, -0.10),
+    new Vector3(-Math.PI / 2, 0, 3.1),
     // new Vector3(-Math.PI / 2, 0, 0),
 ];
 //конфигурируем карточки героев игрока
@@ -430,20 +368,20 @@ randomNumber3 = Math.floor(Math.random() * (maximum3 - minimum + 1)) + minimum;
 configureCard(myHeroCard3, myHeroCardsPositions, myHeroCardsRotations, randomNumber3, 'hand playerHeroCard3 hero3', HEROCARDS);
 
 const opponentHeroCardsPositions = [
-    new Vector3(0.25, 0.9, -1.7),
+    new Vector3(0.25, 0.9, -1.2),
     // new Vector3(0.5, 8.47, 2.5),
-    new Vector3(0.5, 0.91, -1.2),
+    new Vector3(0.75, 0.91, -1.2),
     // new Vector3(0.25, 8.5, 2.501),
-    new Vector3(0, 0.92, -1.2),
+    new Vector3(-0.25, 0.92, -1.2),
     // new Vector3(0, 8.515, 2.502),
 ];
 
 const opponentHeroCardsRotations = [
     new Vector3(-Math.PI / 2, 0, 3.15),
     // new Vector3(2 * Math.PI, Math.PI, 0.15),
-    new Vector3(-Math.PI / 2, 0, 3.2),
-    // new Vector3(2 * Math.PI, Math.PI, 0.10),
     new Vector3(-Math.PI / 2, 0, 3.1),
+    // new Vector3(2 * Math.PI, Math.PI, 0.10),
+    new Vector3(-Math.PI / 2, 0, 3.2),
     // new Vector3(2 * Math.PI, Math.PI, 0),
 ];
 
@@ -464,4 +402,4 @@ maximum4 = myHeroCardsPositions.length -1;
 randomNumber4 = Math.floor(Math.random() * (maximum4 - minimum + 1)) + minimum;
 configureCard(opponentHeroСard3, opponentHeroCardsPositions, opponentHeroCardsRotations, randomNumber3, 'hero6', HEROCARDS);
 
-export {HEROCARDS, textOnBackgroundTexture, myHero2Texture, myHero3Texture, opponentHero1Texture, opponentHero2Texture, opponentHero3Texture};
+export {HEROCARDS, myHero1Texture, myHero2Texture, myHero3Texture, opponentHero1Texture, opponentHero2Texture, opponentHero3Texture};

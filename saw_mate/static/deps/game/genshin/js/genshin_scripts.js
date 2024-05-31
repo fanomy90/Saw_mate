@@ -3,14 +3,16 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { CARDS, emperorTexture, slaveTexture } from './genshin_hero_card.js';
 import { HEROCARDS, myHero1Texture, myHero2Texture, myHero3Texture, opponentHero1Texture, opponentHero2Texture, opponentHero3Texture } from './genshin_hero_card.js';
-
+import { hpIcon } from './icons_card.js';
+import { switchHero } from './switch_hero.js';
+import { moveHero} from './move_hero.js';
 //Получаем пути к текстурам из атрибутов элемента
 const audioPaths = document.getElementById('audio-paths');
 const card_drop_audioPaths = audioPaths.dataset.card_drop;
 const card_flip_audioPaths = audioPaths.dataset.card_flip;
-
 // Получение кнопок
 const btnSwitchHero1 = document.getElementById('btn-switchHero1');
+const btnSwitchHero2 = document.getElementById('btn-switchHero2');
 const btnAnimate1 = document.getElementById('btn-animate1');
 const btnAnimate2 = document.getElementById('btn-animate2');
 const btnAnimate3 = document.getElementById('btn-animate3');
@@ -23,6 +25,32 @@ let hoveredCard;
 const mousePosition = new THREE.Vector2();
 const raycaster = new THREE.Raycaster();
 let x = -2;
+
+// // Создаем массивы для иконок здоровья игрока и противника
+// const playerHpIcons = [];
+// const opponentHpIcons = [];
+
+// // Проверяем, загружена ли иконка здоровья
+// if (hpIcon) {
+//     // Создаем и добавляем иконки здоровья для каждой карточки героя
+//     HEROCARDS.forEach((heroCard, index) => {
+//         const icon = hpIcon.clone(); // Клонируем иконку здоровья
+//         icon.position.copy(heroCard.position); // Задаем позицию иконки здоровья
+//         icon.position.y += 0.2; // Поднимаем немного над карточкой героя
+//         scene.add(icon); // Добавляем иконку здоровья на сцену
+
+//         // Определяем, для какой стороны добавляем иконку здоровья
+//         if (index < 3) {
+//             // Добавляем в массив иконок здоровья игрока
+//             playerHpIcons.push(icon);
+//         } else {
+//             // Добавляем в массив иконок здоровья противника
+//             opponentHpIcons.push(icon);
+//         }
+//     });
+// } else {
+//     console.error("hpIcon не инициализирована");
+// }
 
 //формируем набор карт противника
 const opponentCards = [];
@@ -162,6 +190,10 @@ HEROCARDS.forEach(function(card) {
     initialHeroCardsPositions.push(v);
     initialHeroCardsRotations.push(card.rotation.z);
 });
+
+
+
+
 // обработка нового раунда
 function nextRound() {
     if(CARDS[0].name === 'hand playerCard1 emperor') {
@@ -262,245 +294,45 @@ function resetAndUpdate(side, sideText) {
     }
 }
 // Создаем объект для представления указателя мыши для отладки
-const mousePointerGeometry = new THREE.CircleGeometry(0.05, 32);
-const mousePointerMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
-const mousePointer = new THREE.Mesh(mousePointerGeometry, mousePointerMaterial);
-scene.add(mousePointer);
-// Обработчик события "mousemove"
-window.addEventListener('mousemove', function(e) {
-    // Обновляем позицию указателя мыши в соответствии с позицией мыши на экране
-    const mousePositionX = (e.clientX / window.innerWidth) * 2 - 1;
-    const mousePositionY = -(e.clientY / window.innerHeight) * 2 + 1;
-    mousePointer.position.set(mousePositionX, mousePositionY, 0);
-});
-
-//моя тестовая анимация для работы с карточками героев
-// Переменная для хранения ID карточки с заданными координатами
+// const mousePointerGeometry = new THREE.CircleGeometry(0.05, 32);
+// const mousePointerMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+// const mousePointer = new THREE.Mesh(mousePointerGeometry, mousePointerMaterial);
+// scene.add(mousePointer);
+// // Обработчик события "mousemove"
+// window.addEventListener('mousemove', function(e) {
+//     // Обновляем позицию указателя мыши в соответствии с позицией мыши на экране
+//     const mousePositionX = (e.clientX / window.innerWidth) * 2 - 1;
+//     const mousePositionY = -(e.clientY / window.innerHeight) * 2 + 1;
+//     mousePointer.position.set(mousePositionX, mousePositionY, 0);
+// });
 let myActiveCardId = null;
-// Заданные координаты
-const myActiveCardCoordinates = {
-    position: { x: 0.25, y: 1, z: -3.3 },
-    rotation: { y: 0, z: 3.1 },
-    scale: { x: 1.2, y: 1.2, z: 1.2 }
-};
-//позиции для циклической смены карточек героев
-const positions = [
-    { position: { x: 0, y: 0.9, z: -3.8 }, rotation: { y: 0, z: 3.2 }, scale: { x: 1, y: 1, z: 1 } },
-    { position: { x: 0.25, y: 1, z: -3.3 }, rotation: { y: 0, z: 3.1 }, scale: { x: 1.2, y: 1.2, z: 1.2 } },
-    { position: { x: 0.5, y: 0.91, z: -3.8 }, rotation: { y: 0, z: 3.1 }, scale: { x: 1, y: 1, z: 1 } }
-];
-//счетчик нажатия на кнопку смены героя
-let clickCount = 0;
-// Добавление обработчиков событий для кнопок
-// кнопка смены героя
-btnSwitchHero1.addEventListener('click', function() {
-    // Пример анимации для кнопки 1
-    //console.log('btnAnimate1');
-    //создаем таймлайн с настройками по умолчанию
-    const t1 = gsap.timeline({
-        defaults: {duration: 0.4, delay: 0.1}
-    });
-    //вперед
-    for (let i = 0; i < 3; i++) {
-        const animatedCard = HEROCARDS[i];
-        const positionIndex = (clickCount + i) % 3;
+let opponentActiveCardId = null;
 
-        t1.to(animatedCard.position, {
-            x: positions[positionIndex].position.x,
-            y: positions[positionIndex].position.y,
-            z: positions[positionIndex].position.z
-        }, 0)
-        .to(animatedCard.rotation, {
-            y: positions[positionIndex].rotation.y,
-            z: positions[positionIndex].rotation.z
-        }, 0)
-        .to(animatedCard.scale, {
-            x: positions[positionIndex].scale.x,
-            y: positions[positionIndex].scale.y,
-            z: positions[positionIndex].scale.z
-        }, 0);
-        // Проверка, совпадают ли координаты с целевыми координатами
-        if (positions[positionIndex].position.x === myActiveCardCoordinates.position.x &&
-            positions[positionIndex].position.y === myActiveCardCoordinates.position.y &&
-            positions[positionIndex].position.z === myActiveCardCoordinates.position.z &&
-            positions[positionIndex].rotation.y === myActiveCardCoordinates.rotation.y &&
-            positions[positionIndex].rotation.z === myActiveCardCoordinates.rotation.z &&
-            positions[positionIndex].scale.x === myActiveCardCoordinates.scale.x &&
-            positions[positionIndex].scale.y === myActiveCardCoordinates.scale.y &&
-            positions[positionIndex].scale.z === myActiveCardCoordinates.scale.z) {
-            myActiveCardId = i; // Сохраняем ID карточки
-            console.log('myActiveCardId = ' + i);
-        }
-    }
-    clickCount++;
-    console.log('btnSwitchHero1 clicked and myActiveCardId');
-    switchOpponentActiveCard();
+btnSwitchHero1.addEventListener('click', function() {
+    myActiveCardId = switchHero('mySwitch');
+    console.log('myActiveCardId:', myActiveCardId);
 });
 
-// Переменная для хранения ID карточки противника с заданными координатами
-let opponentActiveCardId = null;
-// Заданные координаты
-const opponentActiveCardCoordinates = {
-    position: { x: 0.25, y: 1, z: -1.7 },
-    rotation: { y: 0, z: 3.1 },
-    scale: { x: 1.2, y: 1.2, z: 1.2 }
-};
-//позиции для циклической смены карточек героев
-const positions2 = [
-    { position: { x: 0, y: 0.9, z: -1.2 }, rotation: { y: 0, z: 3.2 }, scale: { x: 1, y: 1, z: 1 } },
-    { position: { x: 0.25, y: 1, z: -1.7 }, rotation: { y: 0, z: 3.1 }, scale: { x: 1.2, y: 1.2, z: 1.2 } },
-    { position: { x: 0.5, y: 0.91, z: -1.2 }, rotation: { y: 0, z: 3.1 }, scale: { x: 1, y: 1, z: 1 } }
-];
-//переключение карточек героев оппонента в виде функции
-function switchOpponentActiveCard() {
-    let Count = 0;
-    const t1 = gsap.timeline({
-        defaults: {duration: 0.4, delay: 0.1}
-    });
-    //вперед
-    for (let i = 3; i < 6; i++) {
-        const animatedCard = HEROCARDS[i];
-        const positionIndex = (clickCount  + i) % 3;
-        t1.to(animatedCard.position, {
-            x: positions2[positionIndex].position.x,
-            y: positions2[positionIndex].position.y,
-            z: positions2[positionIndex].position.z
-        }, 0)
-        .to(animatedCard.rotation, {
-            y: positions2[positionIndex].rotation.y,
-            z: positions2[positionIndex].rotation.z
-        }, 0)
-        .to(animatedCard.scale, {
-            x: positions2[positionIndex].scale.x,
-            y: positions2[positionIndex].scale.y,
-            z: positions2[positionIndex].scale.z
-        }, 0);
-        // Проверка, совпадают ли координаты с целевыми координатами
-        if (positions2[positionIndex].position.x === opponentActiveCardCoordinates.position.x &&
-            positions2[positionIndex].position.y === opponentActiveCardCoordinates.position.y &&
-            positions2[positionIndex].position.z === opponentActiveCardCoordinates.position.z &&
-            positions2[positionIndex].rotation.y === opponentActiveCardCoordinates.rotation.y &&
-            positions2[positionIndex].rotation.z === opponentActiveCardCoordinates.rotation.z &&
-            positions2[positionIndex].scale.x === opponentActiveCardCoordinates.scale.x &&
-            positions2[positionIndex].scale.y === opponentActiveCardCoordinates.scale.y &&
-            positions2[positionIndex].scale.z === opponentActiveCardCoordinates.scale.z) {
-            opponentActiveCardId = i; // Сохраняем ID карточки
-            console.log('opponentActiveCard = ' + i);
-        }
-    }
-};
+// Обработчик для кнопки 2 (или другой элемент для переключения противника)
+btnSwitchHero2.addEventListener('click', function() {
+    opponentActiveCardId = switchHero('opponentSwitch');
+    console.log('opponentActiveCardId:', opponentActiveCardId);
+});
 
-// Пример анимации для кнопки 1
+// Обработчик для кнопки хода картами героев
 btnAnimate1.addEventListener('click', function() {
-    console.log('btnAnimate1');
-    //проверка наличия активной карты героя
-    if (myActiveCardId !== null) {
-        const myActiveCard = HEROCARDS[myActiveCardId];
-
-    //создаем таймлайн анимации хода игрока
-    const t1 = gsap.timeline({
-        defaults: {duration: 0.4, delay: 0.1}
-    });
-    console.log('начало анимации 1');
-    //вперед
-    t1.to(myActiveCard.position, { y: 0.96, z: -3.8 })
-    .to(myActiveCard.rotation, { z: 3.5 }, 0)
-    .to(myActiveCard.scale, { x: 1.5, y: 1.5, z: 1.5 }, 0)
-    .to(myActiveCard.position, { z: -2.4 }, 0.4)
-    //обратно
-    .to(myActiveCard.rotation, { y: 0, z: 3.1 }, 0.8)
-    .to(myActiveCard.scale, { x: 1.2, y: 1.2, z: 1.2 }, 0.8)
-    .to(myActiveCard.position, { x: 0.25, y: 1, z: -3.3 }, 0.8);
-
-    //карта героя оппонента
-    const animatedCard2 = HEROCARDS[opponentActiveCardId]; // Выбираем первую карточку для примера
-    const t2 = gsap.timeline({
-        defaults: {duration: 0.4, delay: 0.1}
-    });
-    console.log('начало анимации 2');
-    //вперед
-    t2.to(animatedCard2.position, { y: 0.92}, 0)
-    .to(animatedCard2.rotation, { z: 3 }, 0)
-    .to(animatedCard2.scale, { x: 1.5, y: 1.5, z: 1.5 }, 0)
-    .to(animatedCard2.position, { z: -2.4 }, 0.4)
-    //обратно
-    .to(animatedCard2.rotation, { z: 3.2 }, 0.8)
-    .to(animatedCard2.scale, { x: 1, y: 1, z: 1 }, 0.8)
-    .to(animatedCard2.position, { y: 0.9, z: -1.5 }, 0.8);
-
-    } else {
-        console.log('ошибка - не была выбрана активная карта перед началом раунда')
-    }
+    moveHero(myActiveCardId, opponentActiveCardId);
+    console.log('запущена анимация для карты игрока: ' + myActiveCardId, 'карты противника: ' + opponentActiveCardId);
 });
 
 btnAnimate2.addEventListener('click', function() {
     // Пример анимации для кнопки 2
     console.log('btnAnimate2');
-    const animatedCard = HEROCARDS[1]; // Выбираем первую карточку для примера
-    //создаем таймлайн с настройками по умолчанию
-    const t1 = gsap.timeline({
-        defaults: {duration: 0.4, delay: 0.1}
-    });
-    //вперед
-    t1.to(animatedCard.position, { y: 0.96, z: -3.8 })
-    .to(animatedCard.rotation, { z: 3.5 }, 0)
-    .to(animatedCard.scale, { x: 1.5, y: 1.5, z: 1.5 }, 0)
-    .to(animatedCard.position, { z: -2.4 }, 0.4)
-    //обратно
-    .to(animatedCard.rotation, { z: 3.1 }, 0.8)
-    .to(animatedCard.scale, { x: 1, y: 1, z: 1 }, 0.8)
-    .to(animatedCard.position, { y: 0.91, z: -3.5 }, 0.8);
-
-    //карта героя оппонента
-    const animatedCard2 = HEROCARDS[4]; // Выбираем первую карточку для примера
-    const t2 = gsap.timeline({
-        defaults: {duration: 0.4, delay: 0.1}
-    });
-    //вперед
-    t2.to(animatedCard2.position, { y: 0.94}, 0)
-    .to(animatedCard2.rotation, { z: 3 }, 0)
-    .to(animatedCard2.scale, { x: 1.5, y: 1.5, z: 1.5 }, 0)
-    .to(animatedCard2.position, { z: -2.4 }, 0.4)
-    //обратно
-    .to(animatedCard2.rotation, { z: 3.2 }, 0.8)
-    .to(animatedCard2.scale, { x: 1, y: 1, z: 1 }, 0.8)
-    .to(animatedCard2.position, { y: 0.91, z: -1.5 }, 0.8);
-    console.log('btnAnimate2 clicked and animation started');
 });
 
 btnAnimate3.addEventListener('click', function() {
     // Пример анимации для кнопки 3
     console.log('btnAnimate3');
-    const animatedCard = HEROCARDS[2]; // Выбираем первую карточку для примера
-    //создаем таймлайн с настройками по умолчанию
-    const t1 = gsap.timeline({
-        defaults: {duration: 0.4, delay: 0.1}
-    });
-    //вперед
-    t1.to(animatedCard.position, { y: 0.96, z: -3.8 })
-    .to(animatedCard.rotation, { z: 3.5 }, 0)
-    .to(animatedCard.scale, { x: 1.5, y: 1.5, z: 1.5 }, 0)
-    .to(animatedCard.position, { z: -2.4 }, 0.4)
-    //обратно
-    .to(animatedCard.rotation, { z: 3.1 }, 0.8)
-    .to(animatedCard.scale, { x: 1, y: 1, z: 1 }, 0.8)
-    .to(animatedCard.position, { y: 0.92, z: -3.5 }, 0.8);
-
-    //карта героя оппонента
-    const animatedCard2 = HEROCARDS[5]; // Выбираем первую карточку для примера
-    const t2 = gsap.timeline({
-        defaults: {duration: 0.4, delay: 0.1}
-    });
-    //вперед
-    t2.to(animatedCard2.position, { y: 0.94}, 0)
-    .to(animatedCard2.rotation, { z: 3 }, 0)
-    .to(animatedCard2.scale, { x: 1.5, y: 1.5, z: 1.5 }, 0)
-    .to(animatedCard2.position, { z: -2.4 }, 0.4)
-    //обратно
-    .to(animatedCard2.rotation, { z: 3.2 }, 0.8)
-    .to(animatedCard2.scale, { x: 1, y: 1, z: 1 }, 0.8)
-    .to(animatedCard2.position, { y: 0.92, z: -1.5 }, 0.8);
-    console.log('btnAnimate3 clicked and animation started');
 });
 
 //анимация

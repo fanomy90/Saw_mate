@@ -4,6 +4,7 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { CARDS, emperorTexture, slaveTexture } from './genshin_hero_card.js';
 import { HEROCARDS, myHero1Texture, myHero2Texture, myHero3Texture, opponentHero1Texture, opponentHero2Texture, opponentHero3Texture } from './genshin_hero_card.js';
 import { hpIcon } from './icons_card.js';
+import { TEXTBLOCKS, createTextObject } from './icon_test.js';
 import { switchHero } from './switch_hero.js';
 import { moveHero} from './move_hero.js';
 //Получаем пути к текстурам из атрибутов элемента
@@ -52,22 +53,22 @@ let x = -2;
 //     console.error("hpIcon не инициализирована");
 // }
 
-//формируем набор карт противника
+//формируем набор карт противника в будущем брать из модели противника
 const opponentCards = [];
 for(let i = 5; i < CARDS.length; i++) {
     opponentCards.push(CARDS[i]);
 }
-//формируем набор карт героев противника
+//формируем набор карт героев противника в будущем брать из модели противника
 const opponentHeroCards = [];
 for(let i = 3; i < HEROCARDS.length; i++) {
     opponentHeroCards.push(HEROCARDS[i]);
 }
-//формируем набор карт игрока
+//формируем набор карт игрока в будущем брать из модели игрока
 const playerCards = [];
 for(let i = 0; i < 5; i++) {
     playerCards.push(CARDS[i]);
 }
-//формируем набор карт героев противника
+//формируем набор карт героев игрока в будущем брать из модели игрока
 const playerHeroCards = [];
 for(let i = 3; i < HEROCARDS.length; i++) {
     playerHeroCards.push(HEROCARDS[i]);
@@ -77,6 +78,8 @@ const initialCardsPositions = [];
 const initialCardsRotations = [];
 const initialHeroCardsPositions = [];
 const initialHeroCardsRotations = [];
+const playerHeroCardsHp = [];
+//const textObjectsArray = []; //массив для текстовых объектов
 
 //логика табло побед
 let playNext = true;
@@ -174,6 +177,19 @@ gltfLoader.load(staticUrl, function(glb) {
 const gridHelper = new THREE.GridHelper(12, 12);
 scene.add(gridHelper);
 
+// Функция для добавления текстовых объектов на сцену
+// async function addTextToScene(text, x, y, z) {
+//     try {
+//         const textObject = await createTextObject(text, x, y, z);
+//         scene.add(textObject);
+//         return textObject;
+//     } catch (error) {
+//         console.error('Error creating text object:', error);
+//     }
+// }
+// Создаем текстовый объект с небольшим смещением от позиции карточки
+//const textObject1 = await addTextToScene('Hero ', 0.25, 1.2, -3.3);
+
 //добавление карточек из массива CARDS на сцену
 CARDS.forEach(function(card) {
     scene.add(card);
@@ -183,16 +199,21 @@ CARDS.forEach(function(card) {
     initialCardsRotations.push(card.rotation.z);
 });
 //добавление карточек из массива HEROCARDS на сцену
-HEROCARDS.forEach(function(card) {
+HEROCARDS.forEach(async function(card) {
     scene.add(card);
     const v = new THREE.Vector3();
     v.copy(card.position);
     initialHeroCardsPositions.push(v);
     initialHeroCardsRotations.push(card.rotation.z);
+    // Создаем текстовый объект с небольшим смещением от позиции карточки
+    const { id, object: textObject } = await createTextObject('HP ' + card.id, v.x + 0.05, v.y + 0.05, v.z + 0.2);
+    if (textObject) {
+        // const textObjectName = 'textObject' + card.id;
+        // textObjects[textObjectName] = textObject;
+        playerHeroCardsHp.push({ card, textObject, textObjectId: id});
+        scene.add(textObject);
+    }
 });
-
-
-
 
 // обработка нового раунда
 function nextRound() {
@@ -307,26 +328,41 @@ function resetAndUpdate(side, sideText) {
 // });
 let myActiveCardId = null;
 let opponentActiveCardId = null;
+let myActiveCardHpId = null;
+let opponentActiveCardHpId = null;
 
 btnSwitchHero1.addEventListener('click', function() {
-    myActiveCardId = switchHero('mySwitch');
-    console.log('myActiveCardId:', myActiveCardId);
+    //myActiveCardId = switchHero('mySwitch');
+    // const { myActiveCardId, myActiveCardHpId } = switchHero('mySwitch');
+    //console.log('myActiveCardId:', myActiveCardId);
+    //console.log('switchHero1 переключил героев игрока и activeCardId', myactiveCardId);
+    //console.log('switchHero1 переключил героев игрока и activeCardHpId', myactiveCardHpId);
+    const result = switchHero('mySwitch');
+    myActiveCardId = result.myActiveCardId;
+    myActiveCardHpId = result.myActiveCardHpId;
 });
 
 // Обработчик для кнопки 2 (или другой элемент для переключения противника)
 btnSwitchHero2.addEventListener('click', function() {
-    opponentActiveCardId = switchHero('opponentSwitch');
-    console.log('opponentActiveCardId:', opponentActiveCardId);
+    //opponentActiveCardId = switchHero('opponentSwitch');
+    //console.log('opponentActiveCardId:', opponentActiveCardId);
+    //const { opponentactiveCardId, opponentactiveCardHpId } = switchHero('opponentSwitch');
+    //console.log('switchHero1 переключил героев игрока и opponentactiveCardId', opponentactiveCardId);
+    //console.log('switchHero1 переключил героев игрока и opponentactiveCardHpId', opponentactiveCardHpId);
+    const result = switchHero('opponentSwitch');
+    opponentActiveCardId = result.opponentActiveCardId;
+    opponentActiveCardHpId = result.opponentActiveCardHpId;
 });
 
 // Обработчик для кнопки хода картами героев
 btnAnimate1.addEventListener('click', function() {
-    moveHero(myActiveCardId, opponentActiveCardId);
+    moveHero(myActiveCardId, opponentActiveCardId, myActiveCardHpId, opponentActiveCardHpId);
     console.log('запущена анимация для карты игрока: ' + myActiveCardId, 'карты противника: ' + opponentActiveCardId);
 });
 
 btnAnimate2.addEventListener('click', function() {
     // Пример анимации для кнопки 2
+
     console.log('btnAnimate2');
 });
 
@@ -361,9 +397,7 @@ window.addEventListener('click', function(e) {
         //анимации карт игрока
         t1.to(hoveredCard.rotation, { y: Math.PI, z: 0 })
         .to(hoveredCard.position, { y: 0.91, z: -2.9, x }, 0)
-        // .to(hoveredCard.position, { y: 3.18, z: 0.9, x }, 0)
         .to(hoveredCard.scale, { x: 1.5, y: 1.5, z: 1.5 }, 0)
-        // .to(hoveredCard.scale, { x: 1.5, y: 1.5, z: 1.5 }, 0)
         .to(hoveredCard.rotation, { y: 0, delay: 1,
             //запуск звука
             onComplete: function() {
@@ -371,9 +405,7 @@ window.addEventListener('click', function(e) {
             }
         }, 0)
         .to(hoveredCard.position, { y: 0.91, delay: 1 }, 0)
-        // .to(hoveredCard.position, { y: 3.88, delay: 1 }, 0)
         .to(hoveredCard.position, { y: 0.91, duration: 0.3, delay: 1.2 }, 0);
-        // .to(hoveredCard.position, { y: 3.18, duration: 0.3, delay: 1.2 }, 0);
 
         let hoveredCName = hoveredCard.name;
         hoveredCard = null;

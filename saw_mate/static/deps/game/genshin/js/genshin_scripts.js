@@ -27,32 +27,6 @@ const mousePosition = new THREE.Vector2();
 const raycaster = new THREE.Raycaster();
 let x = -2;
 
-// // Создаем массивы для иконок здоровья игрока и противника
-// const playerHpIcons = [];
-// const opponentHpIcons = [];
-
-// // Проверяем, загружена ли иконка здоровья
-// if (hpIcon) {
-//     // Создаем и добавляем иконки здоровья для каждой карточки героя
-//     HEROCARDS.forEach((heroCard, index) => {
-//         const icon = hpIcon.clone(); // Клонируем иконку здоровья
-//         icon.position.copy(heroCard.position); // Задаем позицию иконки здоровья
-//         icon.position.y += 0.2; // Поднимаем немного над карточкой героя
-//         scene.add(icon); // Добавляем иконку здоровья на сцену
-
-//         // Определяем, для какой стороны добавляем иконку здоровья
-//         if (index < 3) {
-//             // Добавляем в массив иконок здоровья игрока
-//             playerHpIcons.push(icon);
-//         } else {
-//             // Добавляем в массив иконок здоровья противника
-//             opponentHpIcons.push(icon);
-//         }
-//     });
-// } else {
-//     console.error("hpIcon не инициализирована");
-// }
-
 //формируем набор карт противника в будущем брать из модели противника
 const opponentCards = [];
 for(let i = 5; i < CARDS.length; i++) {
@@ -177,19 +151,6 @@ gltfLoader.load(staticUrl, function(glb) {
 const gridHelper = new THREE.GridHelper(12, 12);
 scene.add(gridHelper);
 
-// Функция для добавления текстовых объектов на сцену
-// async function addTextToScene(text, x, y, z) {
-//     try {
-//         const textObject = await createTextObject(text, x, y, z);
-//         scene.add(textObject);
-//         return textObject;
-//     } catch (error) {
-//         console.error('Error creating text object:', error);
-//     }
-// }
-// Создаем текстовый объект с небольшим смещением от позиции карточки
-//const textObject1 = await addTextToScene('Hero ', 0.25, 1.2, -3.3);
-
 //добавление карточек из массива CARDS на сцену
 CARDS.forEach(function(card) {
     scene.add(card);
@@ -213,9 +174,11 @@ HEROCARDS.forEach(async function(card) {
         playerHeroCardsHp.push({ card, textObject, textObjectId: id});
         scene.add(textObject);
     }
+    //добавить по аналогии еще объекты типа атаки и защиты
 });
 
 // обработка нового раунда
+//поменять логику на свою: вызов пополнения карточек баффов, выбор активного героя, расставление карточек по местам 
 function nextRound() {
     if(CARDS[0].name === 'hand playerCard1 emperor') {
         CARDS[0].material[4].map = slaveTexture;
@@ -314,18 +277,7 @@ function resetAndUpdate(side, sideText) {
         showResult();
     }
 }
-// Создаем объект для представления указателя мыши для отладки
-// const mousePointerGeometry = new THREE.CircleGeometry(0.05, 32);
-// const mousePointerMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
-// const mousePointer = new THREE.Mesh(mousePointerGeometry, mousePointerMaterial);
-// scene.add(mousePointer);
-// // Обработчик события "mousemove"
-// window.addEventListener('mousemove', function(e) {
-//     // Обновляем позицию указателя мыши в соответствии с позицией мыши на экране
-//     const mousePositionX = (e.clientX / window.innerWidth) * 2 - 1;
-//     const mousePositionY = -(e.clientY / window.innerHeight) * 2 + 1;
-//     mousePointer.position.set(mousePositionX, mousePositionY, 0);
-// });
+
 let myActiveCardId = null;
 let opponentActiveCardId = null;
 let myActiveCardHpId = null;
@@ -371,7 +323,7 @@ btnAnimate3.addEventListener('click', function() {
     console.log('btnAnimate3');
 });
 
-//анимация
+//анимация - убрать и оставить анимацию по кнопкам, в будущем возможно вернусь к такой реализации
 window.addEventListener('click', function(e) {
     //mouseMoveIndicator.position.set(e.clientX, e.clientY, 0); // установка позиции круга
     mousePosition.x = (e.clientX / this.window.innerWidth) * 2 - 1;

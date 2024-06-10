@@ -3,7 +3,7 @@ import { FontLoader } from 'three/addons/loaders/FontLoader.js';
 import * as THREE from 'three';
 //Объявляем массив для хранения карточек героев
 const TEXTBLOCKS = [];
-export function createTextObject(text, x, y, z) {
+export function createTextObject(text, x, y, z, color = 0xff0000) {
     const loader = new FontLoader();
 
     return new Promise((resolve, reject) => {
@@ -19,14 +19,14 @@ export function createTextObject(text, x, y, z) {
                 bevelOffset: 0,
                 bevelSegments: 5
             });
-            const material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+            const material = new THREE.MeshBasicMaterial({ color: color });
             const textMesh = new THREE.Mesh(geometry, material);
             // Устанавливаем начальные координаты
             textMesh.position.set(x, y, z);
             textMesh.rotation.set(-Math.PI / 2, 0, 3.1);
             //добавляем объект в массив и возвращаем его id
             const textObjectId = TEXTBLOCKS.length;
-            TEXTBLOCKS.push(textMesh);
+            TEXTBLOCKS.push(textMesh); //убрать
             resolve({ id: textObjectId, object: textMesh });
         }, undefined, (error) => {
             reject(error);
@@ -35,7 +35,7 @@ export function createTextObject(text, x, y, z) {
 }
 
 // Пример изменения текста объекта
-function updateTextObject(id, newText) {
+function updateTextObject(id, newText, newColor = null) {
     const textObject = TEXTBLOCKS[id];
     if (textObject) {
         const geometry = new TextGeometry(newText, {
@@ -51,8 +51,12 @@ function updateTextObject(id, newText) {
         });
         textObject.geometry.dispose(); // Освобождаем память, связанную со старой геометрией
         textObject.geometry = geometry;
+
+        if (newColor !== null) {
+            textObject.material.color.set(newColor);
+        }
     }
 }
 
-export {TEXTBLOCKS}
+export {TEXTBLOCKS} //убрать
 

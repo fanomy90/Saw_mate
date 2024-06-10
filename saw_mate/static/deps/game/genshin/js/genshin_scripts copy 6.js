@@ -52,10 +52,8 @@ const initialCardsPositions = [];
 const initialCardsRotations = [];
 const initialHeroCardsPositions = [];
 const initialHeroCardsRotations = [];
-const HeroCardsHp = []; //массив для отображения HP
-const HeroCardsAttack = []; //массив для отображения атаки
-const HeroCardsDefense = []; //массив для отображения защиты
-
+const playerHeroCardsHp = [];
+//const textObjectsArray = []; //массив для текстовых объектов
 
 //логика табло побед
 let playNext = true;
@@ -79,15 +77,6 @@ const listener = new THREE.AudioListener();
 const audioLoader = new THREE.AudioLoader();
 let cardDrop = new THREE.Audio(listener);
 let cardFlip = new THREE.Audio(listener);
-//добавление звука
-audioLoader.load(card_drop_audioPaths, function(buffer) {
-    cardDrop.setBuffer(buffer);
-    cardDrop.setVolume(2);
-});
-audioLoader.load(card_flip_audioPaths, function(buffer) {
-    cardFlip.setBuffer(buffer);
-    cardFlip.setVolume(2);
-});
 
 //рендер из курса
 const renderer = new THREE.WebGLRenderer({antialias: true});
@@ -124,6 +113,16 @@ camera.lookAt(new THREE.Vector3(0.25, -50, 2));
 // Вращение камеры по часовой стрелке (например, на 45 градусов)
 // camera.rotation.x = -Math.PI / 4;
 // camera.rotation.z = -Math.PI / 2;
+
+//добавление звука
+audioLoader.load(card_drop_audioPaths, function(buffer) {
+    cardDrop.setBuffer(buffer);
+    cardDrop.setVolume(2);
+});
+audioLoader.load(card_flip_audioPaths, function(buffer) {
+    cardFlip.setBuffer(buffer);
+    cardFlip.setVolume(2);
+});
 
 //игра со светом
 const directionalLight = new THREE.DirectionalLight(0xFFFFFF, 0.8);
@@ -167,27 +166,13 @@ HEROCARDS.forEach(async function(card) {
     v.copy(card.position);
     initialHeroCardsPositions.push(v);
     initialHeroCardsRotations.push(card.rotation.z);
-
-    const { id: hpId, object: hpTextObject } = await createTextObject('HP ' + card.id, v.x + 0.05, v.y + 0.05, v.z + 0.2);
-    if (hpTextObject) {
-        HeroCardsHp.push(hpTextObject);
-        // HeroCardsHp.push({ card, textObject: hpTextObject, textObjectId: hpId });
-        scene.add(hpTextObject);
-    }
-
     // Создаем текстовый объект с небольшим смещением от позиции карточки
-    const { id: attackId, object: attackTextObject } = await createTextObject('Attack ' + card.id, v.x + 0.15, v.y + 0.05, v.z - 0.2, 0x00ff00);
-    if (attackTextObject) {
-        HeroCardsAttack.push(attackTextObject);
-        // HeroCardsAttack.push({ card, textObject: attackTextObject, textObjectId: attackId });
-        scene.add(attackTextObject);
-    }
-    // Создаем текстовый объект с небольшим смещением от позиции карточки
-    const { id: DefenseId, object: DefenseTextObject } = await createTextObject('Defense ' + card.id, v.x + 0.15, v.y + 0.05, v.z - 0.3, 0xffff00);
-    if (attackTextObject) {
-        HeroCardsDefense.push(DefenseTextObject);
-        // HeroCardsDefense.push({ card, textObject: DefenseTextObject, textObjectId: DefenseId });
-        scene.add(DefenseTextObject);
+    const { id, object: textObject } = await createTextObject('HP ' + card.id, v.x + 0.05, v.y + 0.05, v.z + 0.2);
+    if (textObject) {
+        // const textObjectName = 'textObject' + card.id;
+        // textObjects[textObjectName] = textObject;
+        playerHeroCardsHp.push({ card, textObject, textObjectId: id});
+        scene.add(textObject);
     }
     //добавить по аналогии еще объекты типа атаки и защиты
 });
@@ -228,15 +213,15 @@ function showResult() {
     }
 }
 //перемешивание элементов массива
-// function shuffleArray(array) {
-//     for(let i = array.length - 1; i > 0; i--) {
-//         const j = Math.floor(Math.random() * (i + 1));
-//         [array[i], array[j]] = [array[j], array[i]];
-//     }
-// }
-
+function shuffleArray(array) {
+    for(let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+}
 //обновление раунда игры
 function resetAndUpdate(side, sideText) {
+
     x = -2;
     round++;
 
@@ -262,10 +247,12 @@ function resetAndUpdate(side, sideText) {
         playerCards[i].position.copy(initialCardsPositions[i]);
         playerCards[i].rotation.set(-Math.PI / 2, 0, initialCardsRotations[i]);
         playerCards[i].scale.set(1, 1, 1);
+
         opponentCards[i] = arr2[i];
         opponentCards[i].position.copy(initialCardsPositions[i + 5]);
         opponentCards[i].rotation.set(Math.PI * 2, Math.PI, initialCardsRotations[i + 5]);
         opponentCards[i].scale.set(1, 1, 1);
+
         CARDS[i].name = 'hand ' + CARDS[i].name;
     }
     //инициализация карточек героев
@@ -274,10 +261,12 @@ function resetAndUpdate(side, sideText) {
         playerHeroCards[i].position.copy(initialCardsPositions[i]);
         playerHeroCards[i].rotation.set(-Math.PI / 2, 0, initialCardsRotations[i]);
         playerHeroCards[i].scale.set(1, 1, 1);
+
         opponentHeroCards[i] = arr2[i];
         opponentHeroCards[i].position.copy(initialCardsPositions[i + 3]);
         opponentHeroCards[i].rotation.set(Math.PI * 2, Math.PI, initialCardsRotations[i + 3]);
         opponentHeroCards[i].scale.set(1, 1, 1);
+
         HEROCARDS[i].name = 'hand ' + HEROCARDS[i].name;
     }
     //обработка событий раундов игры
@@ -288,23 +277,38 @@ function resetAndUpdate(side, sideText) {
         showResult();
     }
 }
-//объявление переменных для отработки логики хода и анимаций
+
 let myActiveCardId = null;
 let opponentActiveCardId = null;
+let myActiveCardHpId = null;
+let opponentActiveCardHpId = null;
+
 btnSwitchHero1.addEventListener('click', function() {
+    //myActiveCardId = switchHero('mySwitch');
+    // const { myActiveCardId, myActiveCardHpId } = switchHero('mySwitch');
+    //console.log('myActiveCardId:', myActiveCardId);
+    //console.log('switchHero1 переключил героев игрока и activeCardId', myactiveCardId);
+    //console.log('switchHero1 переключил героев игрока и activeCardHpId', myactiveCardHpId);
     const result = switchHero('mySwitch');
     myActiveCardId = result.myActiveCardId;
+    myActiveCardHpId = result.myActiveCardHpId;
 });
 
-// Обработчик для кнопки 2 для переключения карты героя противника (или другой элемент для переключения противника)
+// Обработчик для кнопки 2 (или другой элемент для переключения противника)
 btnSwitchHero2.addEventListener('click', function() {
+    //opponentActiveCardId = switchHero('opponentSwitch');
+    //console.log('opponentActiveCardId:', opponentActiveCardId);
+    //const { opponentactiveCardId, opponentactiveCardHpId } = switchHero('opponentSwitch');
+    //console.log('switchHero1 переключил героев игрока и opponentactiveCardId', opponentactiveCardId);
+    //console.log('switchHero1 переключил героев игрока и opponentactiveCardHpId', opponentactiveCardHpId);
     const result = switchHero('opponentSwitch');
     opponentActiveCardId = result.opponentActiveCardId;
+    opponentActiveCardHpId = result.opponentActiveCardHpId;
 });
 
 // Обработчик для кнопки хода картами героев
 btnAnimate1.addEventListener('click', function() {
-    moveHero(myActiveCardId, opponentActiveCardId);
+    moveHero(myActiveCardId, opponentActiveCardId, myActiveCardHpId, opponentActiveCardHpId);
     console.log('запущена анимация для карты игрока: ' + myActiveCardId, 'карты противника: ' + opponentActiveCardId);
 });
 
@@ -320,83 +324,83 @@ btnAnimate3.addEventListener('click', function() {
 });
 
 //анимация - убрать и оставить анимацию по кнопкам, в будущем возможно вернусь к такой реализации
-// window.addEventListener('click', function(e) {
-//     //mouseMoveIndicator.position.set(e.clientX, e.clientY, 0); // установка позиции круга
-//     mousePosition.x = (e.clientX / this.window.innerWidth) * 2 - 1;
-//     mousePosition.y = -(e.clientY / this.window.innerHeight) * 2 + 1;
-//     // mousePosition.x = (e.clientX / this.window.innerWidth) * 2 - 1;
-//     // mousePosition.y = -(e.clientY / this.window.innerHeight) * 2 + 1;
-//     raycaster.setFromCamera(mousePosition, camera);
-//     const intersects = raycaster.intersectObject(scene);
-//     if(intersects.length > 0) {
-//         if(intersects[0].object.name.includes('hand playerCard') && !finished) {
-//             hoveredCard = intersects[0].object;
-//             //console.log(hoveredCard); // Выводим значение hoveredCard в консоль
-//             intersects[0].object.name = hoveredCard.name.replace('hand ', '');
-//         }
-//     }
-//     if(hoveredCard && playNext && !finished) {
-//         playNext = false;
-//         //запуск звука
-//         cardFlip.play();
-//         const t1 = gsap.timeline({
-//             defaults: {duration: 0.4, delay: 0.1}
-//         });
-//         //анимации карт игрока
-//         t1.to(hoveredCard.rotation, { y: Math.PI, z: 0 })
-//         .to(hoveredCard.position, { y: 0.91, z: -2.9, x }, 0)
-//         .to(hoveredCard.scale, { x: 1.5, y: 1.5, z: 1.5 }, 0)
-//         .to(hoveredCard.rotation, { y: 0, delay: 1,
-//             //запуск звука
-//             onComplete: function() {
-//                 cardDrop.play();
-//             }
-//         }, 0)
-//         .to(hoveredCard.position, { y: 0.91, delay: 1 }, 0)
-//         .to(hoveredCard.position, { y: 0.91, duration: 0.3, delay: 1.2 }, 0);
+window.addEventListener('click', function(e) {
+    //mouseMoveIndicator.position.set(e.clientX, e.clientY, 0); // установка позиции круга
+    mousePosition.x = (e.clientX / this.window.innerWidth) * 2 - 1;
+    mousePosition.y = -(e.clientY / this.window.innerHeight) * 2 + 1;
+    // mousePosition.x = (e.clientX / this.window.innerWidth) * 2 - 1;
+    // mousePosition.y = -(e.clientY / this.window.innerHeight) * 2 + 1;
+    raycaster.setFromCamera(mousePosition, camera);
+    const intersects = raycaster.intersectObject(scene);
+    if(intersects.length > 0) {
+        if(intersects[0].object.name.includes('hand playerCard') && !finished) {
+            hoveredCard = intersects[0].object;
+            //console.log(hoveredCard); // Выводим значение hoveredCard в консоль
+            intersects[0].object.name = hoveredCard.name.replace('hand ', '');
+        }
+    }
+    if(hoveredCard && playNext && !finished) {
+        playNext = false;
+        //запуск звука
+        cardFlip.play();
+        const t1 = gsap.timeline({
+            defaults: {duration: 0.4, delay: 0.1}
+        });
+        //анимации карт игрока
+        t1.to(hoveredCard.rotation, { y: Math.PI, z: 0 })
+        .to(hoveredCard.position, { y: 0.91, z: -2.9, x }, 0)
+        .to(hoveredCard.scale, { x: 1.5, y: 1.5, z: 1.5 }, 0)
+        .to(hoveredCard.rotation, { y: 0, delay: 1,
+            //запуск звука
+            onComplete: function() {
+                cardDrop.play();
+            }
+        }, 0)
+        .to(hoveredCard.position, { y: 0.91, delay: 1 }, 0)
+        .to(hoveredCard.position, { y: 0.91, duration: 0.3, delay: 1.2 }, 0);
 
-//         let hoveredCName = hoveredCard.name;
-//         hoveredCard = null;
+        let hoveredCName = hoveredCard.name;
+        hoveredCard = null;
 
-//         const minimum = 0;
-//         let maximum = opponentCards.length - 1;
-//         let randomNumber = Math.floor(Math.random() * (maximum - minimum + 1)) + minimum;
-//         let oppCname = opponentCards[randomNumber].name;
+        const minimum = 0;
+        let maximum = opponentCards.length - 1;
+        let randomNumber = Math.floor(Math.random() * (maximum - minimum + 1)) + minimum;
+        let oppCname = opponentCards[randomNumber].name;
 
-//         const t2 = new gsap.timeline({
-//             defaults: {duration: 0.4, delay: 0.4}
-//         });
+        const t2 = new gsap.timeline({
+            defaults: {duration: 0.4, delay: 0.4}
+        });
 
-//         t2.to(opponentCards[randomNumber].rotation, { x: 2 * Math.PI - Math.PI / 2, z: Math.PI })
-//         .to(opponentCards[randomNumber].position, { y: 3.18, z: -0.7, x }, 0)
-//         .to(opponentCards[randomNumber].scale, { x: 1.5, y: 1.5, z: 1.5 }, 0)
-//         .to(opponentCards[randomNumber].rotation, { y: 0, delay: 1 }, 0)
-//         .to(opponentCards[randomNumber].position, { y: 3.88, delay: 1 }, 0)
-//         .to(opponentCards[randomNumber].position, { y: 3.18, duration: 0.3, delay: 1.2,
-//             //запуск звука
-//             onComplete: function() {
-//                 playNext = true;
-//                 if(hoveredCName.includes('emperor') && oppCname.includes('slave'))
-//                     resetAndUpdate('opponent', oScore);
-//                 if(hoveredCName.includes('emperor') && oppCname.includes('citizen'))
-//                     resetAndUpdate('player', pScore);
-//                 if(hoveredCName.includes('citizen') && oppCname.includes('slave'))
-//                     resetAndUpdate('player', pScore);
-//                 if(hoveredCName.includes('slave') && oppCname.includes('emperor'))
-//                     resetAndUpdate('player', pScore);
-//                 if(hoveredCName.includes('slave') && oppCname.includes('citizen'))
-//                     resetAndUpdate('opponent', oScore);
-//                 if(hoveredCName.includes('citizen') && oppCname.includes('emperor'))
-//                     resetAndUpdate('opponent', oScore);
-//             }
-//         }, 0);
+        t2.to(opponentCards[randomNumber].rotation, { x: 2 * Math.PI - Math.PI / 2, z: Math.PI })
+        .to(opponentCards[randomNumber].position, { y: 3.18, z: -0.7, x }, 0)
+        .to(opponentCards[randomNumber].scale, { x: 1.5, y: 1.5, z: 1.5 }, 0)
+        .to(opponentCards[randomNumber].rotation, { y: 0, delay: 1 }, 0)
+        .to(opponentCards[randomNumber].position, { y: 3.88, delay: 1 }, 0)
+        .to(opponentCards[randomNumber].position, { y: 3.18, duration: 0.3, delay: 1.2,
+            //запуск звука
+            onComplete: function() {
+                playNext = true;
+                if(hoveredCName.includes('emperor') && oppCname.includes('slave'))
+                    resetAndUpdate('opponent', oScore);
+                if(hoveredCName.includes('emperor') && oppCname.includes('citizen'))
+                    resetAndUpdate('player', pScore);
+                if(hoveredCName.includes('citizen') && oppCname.includes('slave'))
+                    resetAndUpdate('player', pScore);
+                if(hoveredCName.includes('slave') && oppCname.includes('emperor'))
+                    resetAndUpdate('player', pScore);
+                if(hoveredCName.includes('slave') && oppCname.includes('citizen'))
+                    resetAndUpdate('opponent', oScore);
+                if(hoveredCName.includes('citizen') && oppCname.includes('emperor'))
+                    resetAndUpdate('opponent', oScore);
+            }
+        }, 0);
 
-//         if(x < 2)
-//             x++;
-//         opponentCards.splice(randomNumber, 1);
-//         }
-//     }
-// );
+        if(x < 2)
+            x++;
+        opponentCards.splice(randomNumber, 1);
+        }
+    }
+);
 //обработка кнопки повторить игру
 rematch.addEventListener('click', function() {
     finished = false;
@@ -424,5 +428,3 @@ function animate() {
     // calculateRender("Startapp");
 }
 renderer.setAnimationLoop(animate);
-
-export { HeroCardsHp, HeroCardsAttack, HeroCardsDefense }

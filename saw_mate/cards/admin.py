@@ -22,6 +22,7 @@ class ProductsAdmin(admin.ModelAdmin):
         'slug',
         'description',
         'image',
+        ('health', 'attack', 'defense'),
         ('price', 'discount'),
         'quantity',
     ]

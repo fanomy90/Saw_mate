@@ -10,21 +10,6 @@
     {% include "includes/carddeck_button.html" %}
 {% endblock %}
 
-{% block scripts %}
-    <!--Импорт three.js и его адонов-->
-    <script type="importmap">
-        {
-            "imports": {
-                "three": "https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.module.js",
-                "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.164.1/examples/jsm/"
-            }
-        }
-    </script>
-    <!--подключение скрипта для работы со сценой-->
-    <script type="module" src="{% static "deps/game/genshin/js/product_card.js" %}" defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
-{% endblock scripts%}
-
 {% block content %}
     <!-- Контент на странице -->
     <div class="row">
@@ -83,10 +68,11 @@
                     {% if product.image %}
                         {% comment %} <img src="{{ product.image.url }}" class="card-img-top" alt="..."> {% endcomment %}
                         {% comment %} вместо картинки вставить canvas с 3д моделью карточки {% endcomment %}
-                        <div class="rounded product-box" data-static-url="{{ product.image.url }}"></div>
-                        <div class="texture-paths" style="display: none;"
+                        <div class="rounded" id="scene-box" data-static-url="{{ product.image.url }}"></div>
+                        <div id="texture-paths" style="display: none;"
                             data-product = "{{ product.image.url }}"
                             data-cover = "{% static 'deps/js/assets/card2.png' %}"
+                            data-health = "{% static 'deps/game/genshin/assets/health.svg' %}"
                         ></div>
                     {% endif %}
                     <div class="card-body">

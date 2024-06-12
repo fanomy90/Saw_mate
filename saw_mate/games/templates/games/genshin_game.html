@@ -67,7 +67,8 @@
         <button id="rematch">Rematch</button>
     </section>
     
-    <div class="mt-5 pt-5 bg-white custom-shadow rounded" id="scene-box" data-static-url="{% static 'deps/game/genshin/assets/table.glb' %}" ></div>
+    <div class="rounded" id="scene-box" data-static-url="{% static 'deps/game/genshin/assets/table.glb' %}" ></div>
+    {% comment %} <div class="mt-5 pt-5 bg-white custom-shadow rounded" id="scene-box" data-static-url="{% static 'deps/game/genshin/assets/table.glb' %}" ></div> {% endcomment %}
     <!--передача текстур в скрипт-->
     <div id="texture-paths" style="display: none;"
         data-citizen1 = "{% static 'deps/js/assets/citizen1.png' %}"

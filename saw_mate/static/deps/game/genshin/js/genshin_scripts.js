@@ -94,16 +94,16 @@ const renderer = new THREE.WebGLRenderer({antialias: true});
 // renderer.setSize(window.innerWidth, window.innerHeight);
 // document.body.appendChild(renderer.domElement);
 //мой рендер
-// const renderer = new THREE.WebGLRenderer({ alpha: true });
-renderer.setSize(1000, 700);
+//const renderer = new THREE.WebGLRenderer({ alpha: true });
+//renderer.setSize(1000, 700);
 //получение объекта куда будет передаваться canvas
 const sceneBox = document.getElementById('scene-box');
 sceneBox.appendChild(renderer.domElement);
 
 //белый фон
-renderer.setClearColor(0xFEFEFE);
-renderer.shadowMap.enabled = true;
-renderer.toneMapping = THREE.ACESFilmicToneMapping;
+// renderer.setClearColor(0xFEFEFE);
+// renderer.shadowMap.enabled = true;
+// renderer.toneMapping = THREE.ACESFilmicToneMapping;
 
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(
@@ -113,7 +113,7 @@ const camera = new THREE.PerspectiveCamera(
     1000
 );
 //управление сценой для отладки
-const controls = new OrbitControls(camera, renderer.domElement)
+//const controls = new OrbitControls(camera, renderer.domElement)
 // Camera positioning
 // camera.position.set(0, 10, 6);
 // camera.lookAt(new THREE.Vector3(0, 6, 2));
@@ -149,8 +149,8 @@ gltfLoader.load(staticUrl, function(glb) {
     });
 });
 //сетка Sets a 12 by 12 gird helper
-const gridHelper = new THREE.GridHelper(12, 12);
-scene.add(gridHelper);
+// const gridHelper = new THREE.GridHelper(12, 12);
+// scene.add(gridHelper);
 
 //добавление карточек из массива CARDS на сцену
 CARDS.forEach(function(card) {

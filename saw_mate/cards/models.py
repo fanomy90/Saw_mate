@@ -1,3 +1,4 @@
+from email.base64mime import header_length
 from django.db import models
 from django.urls import reverse
 
@@ -21,6 +22,9 @@ class Products(models.Model):
     discount = models.DecimalField(default=0.00, max_digits=4, decimal_places=2, verbose_name='Скидка в %')
     quantity = models.PositiveIntegerField(default=0, verbose_name='Количество')
     category = models.ForeignKey(to=Categories, on_delete=models.CASCADE, verbose_name='Категория')
+    health = models.DecimalField(default=10.0, max_digits=4, decimal_places=1, verbose_name='Очки жизни')
+    attack = models.DecimalField(default=2.0, max_digits=4, decimal_places=1, verbose_name='Сила атаки')
+    defense = models.DecimalField(default=0.0, max_digits=4, decimal_places=1, verbose_name='Очки защиты')
 
     class Meta:
         db_table = 'product'

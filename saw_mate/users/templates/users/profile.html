@@ -83,7 +83,6 @@
                                 </div>
                                 <button type="submit" class="btn btn-dark">Сохранить</button>
                             </form>
-
                             <div class="col-md-12 mb-3">
                                 <h3 class="text-center mb-4">Статистика пользователя</h3>
                                 <p>Достижения: {{ user.achievements }} </p>
@@ -93,7 +92,6 @@
                                 <p>Статус -  {{ user.status }} </p>
                                 <p>Деньги -  {{ user.money }} </p>
                             </div>
-
                         </div>
                     </div>
                     <!-- Корзина -->
@@ -114,7 +112,6 @@
                             {% endif %}
                         </div>
                     </div> {% endcomment %}
-
                     
                     <div class="col-md-7">
                         <!--блок вывода купленных карточек-->
@@ -122,194 +119,35 @@
                         <div class=" bg-white p-4 mb-4 mx-2 rounded custom-shadow">
                             <h3 class="text-center mb-4">Колода карт пользователя</h3>
                             <div class="container" id="carddeck-items-container">
-                                {% comment %} {% include "card_decks/includes/included_carddeck.html" %} {% endcomment %}
                                 {% include "card_decks/includes/included_slider.html" %}
                             </div>
                             <!--сделать кнопку для переноса карточки в набор-->
                             {% if carddecks %}
-                                {% comment %} <a class="btn btn-dark" href="../card_decks/create_cardset.html"> {% endcomment %}
-                                {% comment %} <a class="btn btn-dark" href="../orders/create_order.html">кнопка для для переноса карточки в набор</a> {% endcomment %}
-                                {% comment %} <a class="btn btn-dark" href="{% url 'orders:create_order' %}">Оформить заказ</a> {% endcomment %}
                                 <a class="btn btn-dark" href="{% url 'carddecks:cardset_create' %}">Создать набор карт для игры</a>
-
                             {% endif %}
                         </div>
-                        <!--блок вывода наборов карточек для игры-->
-                        {% comment %} <div class=" bg-white p-4 mb-4 mx-2 rounded custom-shadow">
-                            <h3 class="text-center mb-4">Наборы карт пользователя</h3>
-                            <div class="container" id="carddeck-items-container">
-                                {% include "card_decks/includes/included_set.html" %}
-                            </div>
-                            <!--сделать кнопку для переноса карточки в набор-->
-                            {% if carddecks %}
-                                <a class="btn btn-dark" href="../orders/create_order.html">
-                                    кнопка для для переноса карточки в набор
-                                </a>
-                            {% endif %}
-                        </div> {% endcomment %}
                     </div>
                 </div>
-                <!-- Оформленные заказы -->
-                {% comment %}<div class="col-md-12">
+                <!--Разметка наборов карточек для игры внешняя-->
+                <br>
+                {% user_cardsets request as cardsets %}
+                {% user_setitem request as setitem %}
+                {% user_cardsets_hero request as cardsets_hero %}
+                <div class="bg-white col-md-20 mx-2 rounded custom-shadow">
+                    <!--блок вывода купленных карточек-->
                     <div class=" bg-white p-4 mb-4 mx-2 rounded custom-shadow">
-                        <h3 class="text-center mb-4">Мои заказы</h3>
-                        <!-- Разметка заказов -->
-                        <div class="container">
-                            <div class="accordion" id="accordionExample">
-                                <!--блок для отображения заказов пользователя-->
-                                {% for order in orders %}
-                                    <div class="accordion-item">
-                                        <h2 class="accordion-header" id="heading{{ order.id }}">
-                                            <button class="accordion-button {% if order != orders.0 %}collapsed{% endif %}" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ order.id }}" aria-expanded="false" aria-controls="collapse{{ order.id }}">
-                                                Заказ № {{ order.id }} - {{ order.created_timestamp }} | Статус: <strong class="mx-2">{{ order.status }}</strong>
-                                            </button>
-                                        </h2>
-                                        <div id="collapse{{ order.id }}" class="accordion-collapse collapse {% if order == orders.0 %}show{% endif %}" aria-labelledby="heading{{ order.id }}" data-bs-parent="#accordionExample">
-                                            <div class="accordion-body">
-                                                <table class="table table-dark table-hover">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>Товар</th>
-                                                            <th>Количество</th>
-                                                            <th>Цена</th>
-                                                            <th>Общая стоимость</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <!--через цикл отобразим привязанные к заказам товары-->
-                                                        {% for item in order.orderitem_set.all %}
-                                                        <tr>
-                                                            <td><a class="text-white" href="{% url 'cards:product' item.product.slug %}">{{ item.product.name }}</a></td>
-                                                            <td>{{ item.quantity }}</td>
-                                                            <td>{{ item.price }}</td>
-                                                            <td>{{ item.products_price }}</td>
-                                                        </tr>
-                                                        {% endfor %}
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                    </div>
-                                {% endfor %}
-                            </div>
-                        </div>{% endcomment %}
-                        <!-- Закончилась разметка заказов -->
-
-                        <!--Разметка наборов карточек для игры-->
-                        {% comment %} <div class="bg-white col-md-20 mx-2 rounded custom-shadow">
-                            <br>
-                            <h3 class="text-center mb-4">Наборы карточек для игры</h3>
-                            <div class="container" id="cardset-items-container">
-                                <div class="accordion" id="accordionExample">
-                                    <!--блок для отображения наборов карточек-->
-                                    {% for set in sets %}
-                                        <div class="accordion-item">
-                                            <h2 class="accordion-header" id="heading{{ set.id }}">
-                                                <button class="accordion-button {% if set != sets.0 %}collapsed{% endif %}" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ set.id }}" aria-expanded="false" aria-controls="collapse{{ set.id }}">
-                                                    Набор № {{ set.id }} - {{ set.created_timestamp }} </strong>
-                                                </button>
-                                            </h2>
-                                            <div id="collapse{{ set.id }}" class="accordion-collapse collapse {% if set == sets.0 %}show{% endif %}" aria-labelledby="heading{{ set.id }}" data-bs-parent="#accordionExample">
-                                                <div class="accordion-body">
-                                                    <table class="table table-dark table-hover">
-                                                        <thead>
-                                                            <tr>
-                                                                <th>Карточка</th>
-                                                                <th>Количество</th>
-                                                                <th>set id</th>
-                                                                <th>id</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            <!--через цикл отобразим привязанные к заказам товары-->
-                                                            {% for item in set.setitem_set.all %}
-                                                            <tr>
-                                                                <td><a class="text-white" href="{% url 'cards:product' item.product.slug %}">{{ item.product.name }}</a></td>
-                                                                <td>{{ item.quantity }}</td>
-                                                                <td>{{ set.id }}</td>
-                                                                <td>{{ item.id }}</td>
-                                                            </tr>
-                                                            {% endfor %}
-                                                        </tbody>
-                                                    </table>
-                                                    <div class="container">
-                                                        <div class="swiper tranding-slider">
-                                                            <div class="swiper-wrapper">
-                                                                <!--Slide-start-->
-                                                                {% for item in set.setitem_set.all %}
-                                                                    <div class="swiper-slide tranding-slide">
-                                                                        <div class="tranding-slide-img">
-                                                                            <img src="{{ item.product.image.url }}" class="card-img-top" alt="...">
-                                                                        </div>
-                                                                        <div class="tranding-slide-content">
-                                                                            <h1 class="product-price">{{ product.sell_price }}</h1>
-                                                                            <div class="tranding-slide-content-bottom">
-                                                                                <h2 class="product-name">
-                                                                                    {{ item.product.name }}
-                                                                                </h2>
-                                                                                <h3 class="product-discount">
-                                                                                    {{ item.product.discount }}
-                                                                                </h3>
-                                                                                <h3 class="product-delete">
-                                                                                    <a href="{% url 'carddeck:setitem_remove' %}" class="remove-from-cardset"
-                                                                                    data-cardset-id="{{ set.id }}"
-                                                                                    data-setitem-id="{{ item.id }}">
-                                                                                    {% csrf_token %}
-                                                                                        <img class="mx-1" src="{% static "deps/icons/trash3-fill.svg" %}"
-                                                                                            alt="Catalog Icon" width="16" height="16">
-                                                                                    </a>
-                                                                                </h3>
-                                                                                <div class="rating">
-                                                                                    <ion-ico name="star">/<ion-ico>
-                                                                                    <ion-ico name="star">/<ion-ico>
-                                                                                    <ion-ico name="star">/<ion-ico>
-                                                                                    <ion-ico name="star">/<ion-ico>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                {% endfor %}
-                                                                <!--Slide-end-->
-                                                            </div>
-                                                            <div class="tranding-slider-control">
-                                                                <div class="swiper-button-prev slider-arrow">
-                                                                    <ion-icon name="arrow-back-outline"></ion-icon>
-                                                                </div>
-                                                                <div class="swiper-button-next slider-arrow">
-                                                                    <ion-icon name="arrow-forward-outline"></ion-icon>
-                                                                </div>
-                                                                <div class="swiper-pagination">
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    {% endfor %}
-                                </div>
-                            </div>
-                        </div> {% endcomment %}
-                        <!--Разметка наборов карточек для игры внешняя-->
-                        <br>
-                        {% user_cardsets request as cardsets %}
-                        {% user_setitem request as setitem %}
-                        {% user_cardsets_hero request as cardsets_hero %}
-                        <div class="bg-white col-md-20 mx-2 rounded custom-shadow">
-                            <!--блок вывода купленных карточек-->
-                            <div class=" bg-white p-4 mb-4 mx-2 rounded custom-shadow">
-                                <h3 class="text-center mb-4">Наборы карт пользователя</h3>
-                                <div class="container" id="cardset-items-container">
-                                    {% comment %} {% include "card_decks/includes/included_carddeck.html" %} {% endcomment %}
-                                    {% include "card_decks/includes/included_slider_cardset.html" %}
-                                </div>
-                                
-                                <!--сделать кнопку для переноса карточки в набор-->
-                                {% comment %} {% if cardsests %}
-                                    <a class="btn btn-dark" href="{% url 'carddecks:cardset_create' %}">Создать набор карт для игры</a>
-                                {% endif %} {% endcomment %}
-                            </div>
+                        <h3 class="text-center mb-4">Наборы карт пользователя</h3>
+                        <div class="container" id="cardset-items-container">
+                            {% comment %} {% include "card_decks/includes/included_carddeck.html" %} {% endcomment %}
+                            {% include "card_decks/includes/included_slider_cardset.html" %}
                         </div>
+                        
+                        <!--сделать кнопку для переноса карточки в набор-->
+                        {% comment %} {% if cardsests %}
+                            <a class="btn btn-dark" href="{% url 'carddecks:cardset_create' %}">Создать набор карт для игры</a>
+                        {% endif %} {% endcomment %}
+                    </div>
+                </div>
             </div>
         </div>
     </div>

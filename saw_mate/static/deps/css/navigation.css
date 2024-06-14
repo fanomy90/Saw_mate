@@ -3,6 +3,10 @@
     overflow-x: auto; /* Добавляем горизонтальную прокрутку при необходимости */
     white-space: nowrap; /* Запрещаем перенос текста для создания горизонтального списка */
 }
+.carddeck_catalog_container {
+    max-height: 800px; /* Высота контейнера, которая будет ограничивать область отображения */
+    overflow-y: auto; /* Добавление вертикальной полосы прокрутки */
+}
 .carddeck_card_list {
     display: inline-block; /* Отображаем элементы списка в одной строке */
     justify-content: center;
@@ -35,6 +39,16 @@
     list-style-type: none;
     padding: 0;
     overflow-x: auto;
+}
+.cardset_list {
+    display: flex;
+    justify-content: left;
+    list-style-type: none;
+    padding: 0;
+    overflow-x: auto;
+}
+.cardset_list_item {
+    display: flex;
 }
 /*дополнительный стиль когда карточек баффов в наборе меньше 3*/
 .simple_card_list {
@@ -95,7 +109,7 @@
     background-color: purple; /* Цвет фона */
     border: 6px solid rgb(255, 255, 47); /* Граница */
     border-radius: 5px; /* Скругленные углы */
-    margin-top: 10px; /* Отступ сверху */
+    /* margin-top: 10px; Отступ сверху */
 }
 .item {
     margin: 0 10px;

@@ -1,0 +1,95 @@
+{% load static %}
+{% load cards_tags %}
+{% load carddecks_tags %}
+
+<style>
+    .carddeck-container {
+        max-height: 400px; /* Высота контейнера, которая будет ограничивать область отображения */
+        overflow-y: auto; /* Добавление вертикальной полосы прокрутки */
+    }
+</style>
+
+    <!-- Форма фильтров -->
+    <div class="dropdown mb-2">
+        <button class="btn btn-secondary dropdown-toggle btn-dark" type="button" data-bs-toggle="dropdown"
+            aria-expanded="false">
+            Фильтры
+        </button>
+        {% comment %} Если используется поиск то берется маршрут name='search' иначе маршрут name='index' {% endcomment %}
+        {% comment %} <form action="{% if request.GET.q %}{% url "catalog:search" %}{% else %}{% url "catalog:index" slug_url %}{% endif %}" method="get" class="dropdown-menu bg-dark" data-bs-theme="dark">
+            <p class="text-white mx-3 mt-3">Сортировать:</p>
+            <div class="form-check text-white mx-3">
+                <input class="form-check-input" type="radio" name="order_by" id="flexRadioDefault1" value="default" {% if not request.GET.order_by or request.GET.order_by == 'default'%}checked{% endif %}>
+                <label class="form-check-label" for="flexRadioDefault1">
+                    По умолчанию
+                </label>
+            </div>
+            <div class="form-check text-white mx-3">
+                <input class="form-check-input" type="radio" name="order_by" id="flexRadioDefault2" value="price" {% if request.GET.order_by == 'price' %}checked{% endif %}>
+                <label class="form-check-label" for="flexRadioDefault2">
+                    От дешевых к дорогим
+                </label>
+            </div>
+            <div class="form-check text-white mx-3">
+                <input class="form-check-input" type="radio" name="order_by" id="flexRadioDefault3" value="-price" {% if request.GET.order_by == '-price' %}checked{% endif %}>
+                <label class="form-check-label" for="flexRadioDefault3">
+                    От дорогих к дешевым
+                </label>
+            </div>
+            <button type="submit" class="btn btn-primary mx-3 mt-3">Применить</button>
+        </form> {% endcomment %}
+    </div>
+    {% comment %} Результат поиска {% endcomment %}
+    {% if request.GET.q %}
+    <h3 class="mt-4">Результат поиска по запросу {{ request.GET.q }}</h3>
+        {% if not cards %}
+            <link rel="stylesheet" href="{% static "deps/css/my_footer_css.css" %}">
+            <h2 class="mt-4">По запросу ничего не найдено</h2>
+        {% endif %}
+    {% endif %}
+    {% comment %} каталог купленных карт {% endcomment %}
+    <div class="row carddeck_catalog_container">
+        {% for carddeck in carddecks %}
+            <div class="col-lg-6 col-md-6 col-sm-12 p-3">
+            {% comment %} <div class="col-lg-4 col-md-6 p-4"> {% endcomment %}
+                <div class="card border-primary rounded custom-shadow">
+                    <div class="content1">
+                        <div class="card-img">
+                            {% if carddeck.product.image %}
+                                {% comment %} <img src="{{ carddeck.product.image.url }}" class="card-img-top" alt="Карточка колоды"> {% endcomment %}
+                                <div class="rounded product-box" data-static-url="{{ carddeck.product.image.url }}"></div>
+                                <div class="texture-paths" style="display: none;"
+                                    data-product = "{{ carddeck.product.image.url }}"
+                                    data-cover = "{% static 'deps/js/assets/card2.png' %}"
+                                ></div>
+                            {% else %}
+                                <img src="{% static "deps/images/empty3.jpg" %}" class="card-img-top" alt="Карточка персонажа" style="max-height: 265px; overflow: auto">
+                            {% endif %}
+                        </div>
+                        <div class="action_carddeck">
+                            <!--Перенос карточки в колоду-->
+                            <p class="carddeck_change">
+                                <a href="{% url 'carddeck:carddeck_change' %}" class="add-to-cardset" data-carddeck-id="{{ carddeck.id }}">
+                                    {% csrf_token %}
+                                    <img class="mx-1" src="{% static "deps/icons/cardsets.svg" %}" alt="Catalog Icon" width="16" height="16">
+                                </a>
+                            </p>
+                            <p class="carddeck_change">{{carddeck.product.name}}</p>
+                            <!--Перенос карточки из колоды-->
+                            <p class="product-delete">
+                                <a href="{% url 'carddeck:carddeck_remove' %}" class="remove-from-carddeck" data-carddeck-id="{{ carddeck.id }}">
+                                    {% csrf_token %}
+                                    <img class="mx-1" src="{% static "deps/icons/trash3-fill.svg" %}" alt="Catalog Icon" width="16" height="16">
+                                </a>
+                            </p>
+                        </div>
+                        {% comment %} <p>carddeck sell_price: {{ carddeck.product.sell_price }}</p> {% endcomment %}
+                        {% comment %} <p>category name: {{ carddeck.product.category.name }}</p> {% endcomment %}
+                        {% comment %} <p>carddeck id: {{ carddeck.id }}</p> {% endcomment %}
+                        {% comment %} <p>carddeck quantity: {{ carddeck.quantity }}</p> {% endcomment %}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+

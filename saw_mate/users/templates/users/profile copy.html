@@ -4,23 +4,6 @@
 {% load carts_tags %}
 {% comment %} подключаем шаблонный тег из приложения card_decks для передачи карзин пользователя {% endcomment %}
 {% load carddecks_tags %}
-{% comment %} шаблонный тег для каталога {% endcomment %}
-{% load cards_tags %}
-
-{% block scripts %}
-    <!--Импорт three.js и его адонов-->
-    <script type="importmap">
-        {
-            "imports": {
-                "three": "https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.module.js",
-                "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.164.1/examples/jsm/"
-            }
-        }
-    </script>
-    <!--подключение скрипта для работы со сценой-->
-    <script type="module" src="{% static "deps/game/genshin/js/product_card.js" %}" defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
-{% endblock scripts%}
 
 {% block content %}
     <div class="row">
@@ -131,17 +114,14 @@
                     </div> {% endcomment %}
                     
                     <div class="col-md-7">
-                        <!--блок вывода купленных карточек carddecks-->
+                        <!--блок вывода купленных карточек-->
                         {% user_carddecks request as carddecks %}
                         <div class=" bg-white p-4 mb-4 mx-2 rounded custom-shadow">
                             <h3 class="text-center mb-4">Колода карт пользователя</h3>
                             <div class="container" id="carddeck-items-container">
-                                {% include "card_decks/includes/included_catalog.html" %}
-                                {% comment %} {% include "card_decks/includes/included_slider.html" %} {% endcomment %}
+                                {% include "card_decks/includes/included_slider.html" %}
                             </div>
-
                             <!--сделать кнопку для переноса карточки в набор-->
-                            <br>
                             {% if carddecks %}
                                 <a class="btn btn-dark" href="{% url 'carddecks:cardset_create' %}">Создать набор карт для игры</a>
                             {% endif %}
@@ -159,8 +139,7 @@
                         <h3 class="text-center mb-4">Наборы карт пользователя</h3>
                         <div class="container" id="cardset-items-container">
                             {% comment %} {% include "card_decks/includes/included_carddeck.html" %} {% endcomment %}
-                            {% comment %} {% include "card_decks/includes/included_slider_cardset.html" %} {% endcomment %}
-                            {% include "card_decks/includes/included_cardset_item.html" %}
+                            {% include "card_decks/includes/included_slider_cardset.html" %}
                         </div>
                         
                         <!--сделать кнопку для переноса карточки в набор-->

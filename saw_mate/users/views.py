@@ -73,6 +73,9 @@ def registration(request):
 #ограничение доступа для неавторизованных пользователей
 @login_required
 def profile(request):
+    # нужно будет добавить фильтр по купленным карточкам как было реализовано в catalog
+
+    # вспоминить как работает
     if request.method == 'POST':
         form = ProfileForm(data=request.POST, instance=request.user, files=request.FILES)
         if form.is_valid():
@@ -82,7 +85,6 @@ def profile(request):
     else:
         #отображение информации пользователя
         form = ProfileForm(instance=request.user)
-    
     #отображение заказов в профиле
     orders = (
         #фильтруем заказы по пользователю
@@ -96,12 +98,6 @@ def profile(request):
         #сортируем полученные элементы по -id - вверху будет последний заказ
         .order_by("-id")
     )
-    # context = {
-    #     'title': 'Home - Кабинет',
-    #     'form': form,
-    #     'orders': orders,
-    # }
-
     #отображение наборов карточек в профиле
     sets = (
         Set.objects.filter(user=request.user).prefetch_related(
@@ -112,50 +108,51 @@ def profile(request):
         )
         .order_by("-id")
     )
+
+    # Переделать вывод карточек в наборе
     #передаем карточки героев
-    user_cardsets_hero = {}
-    for set_obj in sets:
-        filtered_items = list(set_obj.setitem_set.filter(
-            product__category__name='Персонажи',
-            quantity__gt=0
-        ).order_by('-id')[:3])  # Преобразуем QuerySet в список
+    # user_cardsets_hero = {}
+    # for set_obj in sets:
+    #     filtered_items = list(set_obj.setitem_set.filter(
+    #         product__category__name='Персонажи',
+    #         quantity__gt=0
+    #     ).order_by('-id')[:3])  # Преобразуем QuerySet в список
 
-        # Если filtered_items содержит менее 3 элементов, добавляем пустые заглушки
-        if len(filtered_items) < 3:
-            empty_count = 3 - len(filtered_items)
+    #     # Если filtered_items содержит менее 3 элементов, добавляем пустые заглушки
+    #     if len(filtered_items) < 3:
+    #         empty_count = 3 - len(filtered_items)
 
-            if Products.objects.filter(name="empty").exists():
-                for i in range(empty_count):
-                    empty_set_obj = SetItem()
-                    # Задаем временные PK для каждой заглушки
-                    empty_set_obj.pk = i
-                    empty_set_obj.product = Products.objects.get(name="empty")
-                    #empty_set_obj.product.category.name = default_product.category.name
-                    empty_set_obj.set_id = set_obj.id
-                    empty_set_obj.item_id = i
-                    empty_set_obj.quantity = 0
-                    filtered_items.append(empty_set_obj)
-            else:
-                for i in range(empty_count):
-                    empty_set_obj = SetItem()
-                    # Задаем временные PK для каждой заглушки
-                    empty_set_obj.pk = i
-                    # empty_set_obj.product = default_product
-                    #empty_set_obj.product.category.name = default_product.category.name
-                    empty_set_obj.set_id = set_obj.id
-                    empty_set_obj.item_id = i
-                    empty_set_obj.quantity = 0
-                    filtered_items.append(empty_set_obj)
+    #         if Products.objects.filter(name="empty").exists():
+    #             for i in range(empty_count):
+    #                 empty_set_obj = SetItem()
+    #                 # Задаем временные PK для каждой заглушки
+    #                 empty_set_obj.pk = i
+    #                 empty_set_obj.product = Products.objects.get(name="empty")
+    #                 #empty_set_obj.product.category.name = default_product.category.name
+    #                 empty_set_obj.set_id = set_obj.id
+    #                 empty_set_obj.item_id = i
+    #                 empty_set_obj.quantity = 0
+    #                 filtered_items.append(empty_set_obj)
+    #         else:
+    #             for i in range(empty_count):
+    #                 empty_set_obj = SetItem()
+    #                 # Задаем временные PK для каждой заглушки
+    #                 empty_set_obj.pk = i
+    #                 # empty_set_obj.product = default_product
+    #                 #empty_set_obj.product.category.name = default_product.category.name
+    #                 empty_set_obj.set_id = set_obj.id
+    #                 empty_set_obj.item_id = i
+    #                 empty_set_obj.quantity = 0
+    #                 filtered_items.append(empty_set_obj)
 
-        user_cardsets_hero = filtered_items
-
+    #     user_cardsets_hero = filtered_items
 
     context = {
         'title': 'Home - Кабинет',
         'form': form,
         'orders': orders,
         'sets': sets,
-        'cardsets_hero': user_cardsets_hero,
+        # 'cardsets_hero': user_cardsets_hero,
     }
 
     return render(request, 'users/profile.html', context)

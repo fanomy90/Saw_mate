@@ -40,27 +40,6 @@ class CardDeck(models.Model):
             return f'Колода {self.user.username} | Товар {self.product.name} | Количество {self.quantity}'
 
         return f'Анонимная колода | Товар {self.product.name} | Количество {self.quantity}'
-    
-#описание набора карт для игры
-# class CardSet(models.Model):
-#     name = models.CharField(max_length=150, unique=True, verbose_name='Набор карт')
-#     card = models.ManyToManyField('CardDeck', null=True, related_name='card', verbose_name='Карточки в наборе')
-#     quantity = models.PositiveSmallIntegerField(default=0, verbose_name='Количество')
-#     # def add_card_to_set(self, card):
-#     #     self.cards_in_set.add(card)
-
-#     # def remove_card_from_set(self, card):
-#     #     self.cards_in_set.remove(card)
-
-#     # def get_cards_in_set(self):
-#     #     return self.cards_in_set.all()
-
-#     class Meta:
-#         db_table = 'cardset'
-#         verbose_name = 'Набор карт'
-#         verbose_name_plural = "Наборы карт"
-#     def __str__(self):
-#         return self.name
 
 # второй вариант набора карт (аналог заказа)
 class SetItemQueryset(models.QuerySet):
@@ -81,13 +60,11 @@ class Set(models.Model):
         verbose_name_plural = 'Наборы карт версия 2'
     
     def __str__(self):
-        #return f"Набор карточек (версия 2) № {self.pk} | пользователь {self.user.first_name} {self.user.last_name}"
         return f"Набор карточек (версия 2) № {self.pk}"
 # модель для карточек в наборе
 class SetItem(models.Model):
     set = models.ForeignKey(to=Set, on_delete=models.CASCADE, verbose_name='Заказ')
-    product = models.ForeignKey(to=Products, on_delete=models.SET_DEFAULT, null=True, verbose_name='Карточка в наборе 2', default=None)
-    # name = models.CharField(max_length=150, null=True, verbose_name='Название')
+    product = models.ForeignKey(to=Products, on_delete=models.SET_DEFAULT, null=True, verbose_name='Карточка в наборе (версия 2)', default=None)
     quantity = models.PositiveIntegerField(default=0, verbose_name='Количество')
     class Meta:
         db_table = 'set_item'
@@ -95,9 +72,6 @@ class SetItem(models.Model):
         verbose_name_plural = 'Карточки в наборе (версия 2)'
 
     objects = SetItemQueryset.as_manager()
-
-    # def products_price(self):
-    #     return round(self.product.sell_price() * self.quantity, 2)
 
     def __str__(self):
         return f"Карточка {self.product} | Набор № {self.set.pk}"

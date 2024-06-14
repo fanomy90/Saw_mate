@@ -1,0 +1,78 @@
+<!--Подключаемый шаблон наборов карт-->
+{% load static %}
+{% load cards_tags %}
+{% load carddecks_tags %}
+<div class="card mb-3 text-bg-light shadow-lg">
+    <ul class="cardset_list">
+        {% for set in cardsets %}
+            <div>
+                <li>
+                    <div class="cardset_list_item">
+                        <h3 class="product-delete">
+                            <a href="{% url 'carddeck:cardset_remove' %}" class="remove-cardset"
+                            data-cardset-id="{{ set.id }}"
+                            {% csrf_token %}
+                                <img class="mx-1" src="{% static "deps/icons/trash3-fill.svg" %}"
+                                    alt="Catalog Icon" width="16" height="16">
+                            </a>
+                        </h3>
+                        <button class="btn btn-secondary btn-dark" type="button" data-bs-toggle="dropdown"
+                            aria-expanded="false">Набор № {{ set.id }}
+                        </button>
+                        {% comment %} карточек в наборе - {{ set.setitem_set.total_quantity }},  {% endcomment %}
+                        {% comment %} набор создан - {{ set.created_timestamp }}, {% endcomment %}
+                    </div>
+                </li>
+            </div>
+        {% endfor %}
+        <br>
+        <button type="button" class="btn btn-dark btn-sm increment-carddeck"
+            data-carddeck-id="{{ carddeck.id }}" 
+            data-carddeck-change-url="{% url 'carddeck:carddeck_change' %}">
+            {% csrf_token %}
+            +
+        </button>
+    </ul>
+
+
+
+    {% for item in set.setitem_set.all %}
+        <div class="content">
+            <div class="card-img">
+                {% if item.product.image %}
+                    <img src="{{ item.product.image.url }}" class="card-img-top" alt="Карточка персонажа">
+                {% else %}
+                    <img src="{% static "deps/images/empty3.jpg" %}" class="card-img-top" alt="Карточка персонажа" style="max-height: 265px; overflow: auto">
+                {% endif %}
+            </div>
+            <div class="action_cardset">
+                <!--Перенос карточки в колоду-->
+                <p class="cardset_change">
+                    <a href="{% url 'carddeck:cardset_change' %}" class="add-to-carddeck"
+                    data-cardset-id="{{ set.id }}"
+                    data-setitem-id="{{ item.id }}">
+                    {% csrf_token %}
+                        <img class="mx-1" src="{% static "deps/icons/carddecks_b.svg" %}"
+                            alt="Catalog Icon" width="16" height="16">
+                    </a>
+                </p>
+                <p class="cardset_change">{{item.product.name}}</p>
+                <!--Перенос карточки из колоды-->
+                <p class="product-delete">
+                    <a href="{% url 'carddeck:setitem_remove' %}" class="remove-from-cardset"
+                    data-cardset-id="{{ set.id }}"
+                    data-setitem-id="{{ item.id }}">
+                    {% csrf_token %}
+                        <img class="mx-1" src="{% static "deps/icons/trash3-fill.svg" %}"
+                            alt="Catalog Icon" width="16" height="16">
+                    </a>
+                </p>
+            </div>
+            <p>product sell_price: {{ item.product.sell_price }}</p>
+            <p>category name: {{ item.product.category.name }}</p>
+            <p>set id: {{ set.id }}</p>
+            <p>item id: {{ item.id }}</p>
+            <p>item quantity: {{ item.quantity }}</p>
+        </div>
+    {% endfor %}
+</div>

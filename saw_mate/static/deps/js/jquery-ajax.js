@@ -163,7 +163,35 @@ $(document).ready(function () {
         // Блокируем его базовое действие, ловим событие и все что находится внутри тега
         e.preventDefault();
         // Из атрибута href берем ссылку на контроллер django
-        var create_cardset_url = $(this).data("url");
+        var change_cardset_url = $(this).data("url");
+        var cardset_id = $(this).data("cardset-id");
+        $.ajax({
+            type: "POST",
+            url: change_cardset_url,
+            data: {
+                cardset_id: cardset_id,
+                csrfmiddlewaretoken: $("[name=csrfmiddlewaretoken]").val(),
+            },
+            success: function (data) {
+                // Сообщение
+                var successMessage = $("<div>").html(data.message).fadeIn(400);
+                $("body").append(successMessage);
+                // Через 7сек убираем сообщение
+                setTimeout(function () {
+                    successMessage.fadeOut(400, function() {
+                        successMessage.remove();
+                    });
+                }, 7000);
+                // Меняем содержимое профиля пользователя на ответ от django (новый отрисованный фрагмент разметки)
+                // var cardsetItemsContainer = $("#cardset-items-container");
+                // cardsetItemsContainer.html(data.cardset_items_html);
+                $("#cardset-items-container").html(data.cardset_items_html);
+            },
+            error: function (data) {
+                console.log("Ошибка при изменении набора карт");
+            },
+        });
+    });
 
     // Ловим событие клика по кнопке для создания набора карт для игры
     $(document).on("click", ".cardset_create", function (e) {
@@ -554,7 +582,7 @@ $(document).ready(function () {
                 // Меняем содержимое профиля на ответ от django (новый отрисованный фрагмент разметки корзины)
                 var cardsetItemsContainer = $("#cardset-items-container");
                 cardsetItemsContainer.html(data.cardset_items_html);
-                updateCart(cartID, currentValue - 1, -1, url);
+                // updateCart(cartID, currentValue - 1, -1, url);
 
             },
 

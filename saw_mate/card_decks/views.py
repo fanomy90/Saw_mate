@@ -225,26 +225,38 @@ def cardset_add(request):
 
 def cardset_change(request):
     if request.method == 'POST':
+        response_data = {}
         try:
             with transaction.atomic():
                 # user = request.user
                 cardset_id = request.POST.get("cardset_id")
-                cardset = Set.objects.get(id=cardset_id, user=request.user)
-                cardset.active = 1
-                messages.success(request, 'Набор карт получен из БД')
-        except ValidationError as e:
+                cardset = Set.objects.get(user=request.user, id=cardset_id)
+                cardset.active = True
+                cardset.save()
+                messages.success(request, 'Набор карт активирован')
+                user_cardset = get_user_cardsets(request)
+                user_setitems = get_user_setitem(request, cardset_id)
+                cardset_items_html = render_to_string("card_decks/includes/included_cardset_item.html", {"setitems": user_setitems, "cardsets": user_cardset}, request=request)
+                response_data = {
+                    "message": "Набор карт передан для показа",
+                    "cardset_items_html": cardset_items_html,
+                }
+        except Set.DoesNotExist:
+            messages.error(request, "Набор карт не найден.")
+        except Exception as e:
             messages.error(request, str(e))
                 # Получаем все наборы карт пользователя с помощью метода из файла utils.py
-        user_cardset = get_user_cardsets(request)
+        # user_setitem = get_user_setitem(request)
         # Преобразуем в строку разметку набора карт пользователя с передачей в разметку контекста
-        cardset_items_html = render_to_string("card_decks/includes/included_cardset_item.html", {"cardsets": user_cardset}, request=request)
+        # cardset_items_html = render_to_string("card_decks/includes/included_cardset_item.html", {"cardsets": user_setitem}, request=request)
         # Собираем контекст для передачи изменений в наборе карт в jQuery
-        response_data = {
-            "message": "Набор карт передан для показа",
-            "cardset_items_html": cardset_items_html,
-        }
+        # response_data = {
+        #     "message": "Набор карт передан для показа",
+        #     "cardset_items_html": cardset_items_html,
+        # }
         return JsonResponse(response_data)
-    return JsonResponse(response_data)
+    else:
+        return JsonResponse({"message": "Некорректный запрос."}, status=400)
 
 #переносим карту из набора в колоду
 # def cardset_change(request):

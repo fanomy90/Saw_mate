@@ -29,15 +29,16 @@ def get_user_cardsets(request):
 
 
 #допилить запрос карточек в наборе пользователя
-def get_user_setitem(request):
+def get_user_setitem(request, cardset_id):
     if request.user.is_authenticated:
         # Получаем все карточки в наборе для авторизованного пользователя
-        return SetItem.objects.filter(set__user=request.user).select_related('product')
+        # return SetItem.objects.filter(set__user=request.user).select_related('product')
+        return SetItem.objects.filter(set__user=request.user, set__id=cardset_id).select_related('product')
     else:
         # Если пользователь не авторизован, используем сессионный ключ
         if not request.session.session_key:
             request.session.create()
-        return SetItem.objects.filter(session_key=request.session.session_key).select_related('product')
+        return SetItem.objects.filter(session_key=request.session.session_key, set__id=cardset_id).select_related('product')
 
 
 #данные для карточек персонажей в наборе карт пользователя

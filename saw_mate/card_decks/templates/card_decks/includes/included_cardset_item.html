@@ -48,7 +48,8 @@
 
 
     <!--Карты в активном наборе-->
-    {% for item in set.setitem_set.all %}
+    {% for item in setitems %}
+    {% comment %} {% for item in setitem %} {% endcomment %}
         <div class="content">
             <div class="card-img">
                 {% if item.product.image %}
@@ -57,7 +58,7 @@
                     <img src="{% static "deps/images/empty3.jpg" %}" class="card-img-top" alt="Карточка персонажа" style="max-height: 265px; overflow: auto">
                 {% endif %}
             </div>
-            <div class="action_cardset">
+            {% comment %} <div class="action_cardset">
                 <!--Перенос карточки в колоду-->
                 <p class="cardset_change">
                     <a href="{% url 'carddeck:cardset_change' %}" class="add-to-carddeck"
@@ -79,7 +80,7 @@
                             alt="Catalog Icon" width="16" height="16">
                     </a>
                 </p>
-            </div>
+            </div> {% endcomment %}
             <p>product sell_price: {{ item.product.sell_price }}</p>
             <p>category name: {{ item.product.category.name }}</p>
             <p>set id: {{ set.id }}</p>

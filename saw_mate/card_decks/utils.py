@@ -20,7 +20,7 @@ def get_user_cardsets(request):
                 "setitem_set",
                 queryset=SetItem.objects.select_related("product"),
             )
-        ).order_by('-created_timestamp')  # Сортируем по времени создания в убывающем порядке
+        ).order_by('created_timestamp')  # Сортируем по времени создания в убывающем порядке
     else:
         # Если пользователь не авторизован, используем сессионный ключ
         if not request.session.session_key:

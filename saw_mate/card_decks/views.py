@@ -156,6 +156,28 @@ def carddeck_remove(request):
 #@login_required
 def cardset_create(request):
     if request.method == 'POST':
+        try:
+            with transaction.atomic():
+                user = request.user
+                Set.objects.create(user=user)
+                messages.success(request, 'Новый набор карт создан')
+        except ValidationError as e:
+            messages.error(request, str(e))
+        # Получаем все наборы карт пользователя с помощью метода из файла utils.py
+        user_cardset = get_user_cardsets(request)
+        # Преобразуем в строку разметку набора карт пользователя с передачей в разметку контекста
+        cardset_items_html = render_to_string("card_decks/includes/included_cardset_item.html", {"cardsets": user_cardset}, request=request)
+        # Собираем контекст для передачи изменений в наборе карт в jQuery
+        response_data = {
+            "message": "Набор карт успешно создан и отрисован",
+            "cardset_items_html": cardset_items_html,
+        }
+        return JsonResponse(response_data)
+    return JsonResponse({"error": "Invalid request method"}, status=400)
+
+#@login_required
+def cardset_add(request):
+    if request.method == 'POST':
         form = CreateCardsetForm(data=request.POST)
         if form.is_valid():
             try:
@@ -201,50 +223,73 @@ def cardset_create(request):
     }
     return render(request, 'card_decks/cardset_create.html', context=context)
 
-#переносим карту из набора в колоду
 def cardset_change(request):
-    # Получаем данные из POST-запроса о наборе пользователя
-    setitem_id = request.POST.get("setitem_id")
-    # Получаем экземпляр объекта набора карт из модели по id или возвращаем 404 ошибку, если объект не найден
-    #setitem = get_object_or_404(SetItem, id=setitem_id)
-    setitem = SetItem.objects.get(id=setitem_id)
-    
-    # Проверяем, существует ли у объекта набора карт quantity больше или равное 1
-    if setitem.quantity >= 1:
-        setitem.quantity -= 1
-        setitem.save()
-    # else:
-    #     setitem.delete()
-
-    # Работаем с колодой карт пользователя
-    carddecks = CardDeck.objects.filter(user=request.user, product=setitem.product)
-    if carddecks.exists():
-        carddeck = carddecks.first()
-        if carddeck:
-            carddeck.quantity += 1
-            carddeck.save()
-    else:
-        # Если объекта в колоде не существует, создаем новый объект для данного пользователя и продукта
-        CardDeck.objects.create(user=request.user, product=setitem.product, quantity=1)
-    
-    # Работаем с перерисовкой шаблонов
-    # Получаем все наборы карт пользователя с помощью метода из файла utils.py
-    user_cardset = get_user_cardsets(request)
-    #user_cardset = get_user_setitem(request)
-    # Преобразуем в строку разметку набора карт пользователя с передачей в разметку контекста
-    cardset_items_html = render_to_string("card_decks/includes/included_slider_cardset.html", {"cardsets": user_cardset}, request=request)
-    # Получаем колоду пользователя с помощью метода из файла utils.py
-    user_carddeck = get_user_carddecks(request)
-    # Преобразуем в строку разметку колоды пользователя с передачей в разметку контекста
-    carddeck_items_html = render_to_string("card_decks/includes/included_slider.html", {"carddecks": user_carddeck}, request=request)
-    
-    # Собираем контекст для передачи изменений в наборе карт в jQuery
-    response_data = {
-        "message": "Карточка успешно убрана из набора и возвращена в колоду карт",
-        "cardset_items_html": cardset_items_html,
-        "carddeck_items_html": carddeck_items_html,
-    }
+    if request.method == 'POST':
+        try:
+            with transaction.atomic():
+                # user = request.user
+                cardset_id = request.POST.get("cardset_id")
+                cardset = Set.objects.get(id=cardset_id, user=request.user)
+                cardset.active = 1
+                messages.success(request, 'Набор карт получен из БД')
+        except ValidationError as e:
+            messages.error(request, str(e))
+                # Получаем все наборы карт пользователя с помощью метода из файла utils.py
+        user_cardset = get_user_cardsets(request)
+        # Преобразуем в строку разметку набора карт пользователя с передачей в разметку контекста
+        cardset_items_html = render_to_string("card_decks/includes/included_cardset_item.html", {"cardsets": user_cardset}, request=request)
+        # Собираем контекст для передачи изменений в наборе карт в jQuery
+        response_data = {
+            "message": "Набор карт передан для показа",
+            "cardset_items_html": cardset_items_html,
+        }
+        return JsonResponse(response_data)
     return JsonResponse(response_data)
+
+#переносим карту из набора в колоду
+# def cardset_change(request):
+#     # Получаем данные из POST-запроса о наборе пользователя
+#     setitem_id = request.POST.get("setitem_id")
+#     # Получаем экземпляр объекта набора карт из модели по id или возвращаем 404 ошибку, если объект не найден
+#     #setitem = get_object_or_404(SetItem, id=setitem_id)
+#     setitem = SetItem.objects.get(id=setitem_id)
+    
+#     # Проверяем, существует ли у объекта набора карт quantity больше или равное 1
+#     if setitem.quantity >= 1:
+#         setitem.quantity -= 1
+#         setitem.save()
+#     # else:
+#     #     setitem.delete()
+
+#     # Работаем с колодой карт пользователя
+#     carddecks = CardDeck.objects.filter(user=request.user, product=setitem.product)
+#     if carddecks.exists():
+#         carddeck = carddecks.first()
+#         if carddeck:
+#             carddeck.quantity += 1
+#             carddeck.save()
+#     else:
+#         # Если объекта в колоде не существует, создаем новый объект для данного пользователя и продукта
+#         CardDeck.objects.create(user=request.user, product=setitem.product, quantity=1)
+    
+#     # Работаем с перерисовкой шаблонов
+#     # Получаем все наборы карт пользователя с помощью метода из файла utils.py
+#     user_cardset = get_user_cardsets(request)
+#     #user_cardset = get_user_setitem(request)
+#     # Преобразуем в строку разметку набора карт пользователя с передачей в разметку контекста
+#     cardset_items_html = render_to_string("card_decks/includes/included_slider_cardset.html", {"cardsets": user_cardset}, request=request)
+#     # Получаем колоду пользователя с помощью метода из файла utils.py
+#     user_carddeck = get_user_carddecks(request)
+#     # Преобразуем в строку разметку колоды пользователя с передачей в разметку контекста
+#     carddeck_items_html = render_to_string("card_decks/includes/included_slider.html", {"carddecks": user_carddeck}, request=request)
+    
+#     # Собираем контекст для передачи изменений в наборе карт в jQuery
+#     response_data = {
+#         "message": "Карточка успешно убрана из набора и возвращена в колоду карт",
+#         "cardset_items_html": cardset_items_html,
+#         "carddeck_items_html": carddeck_items_html,
+#     }
+#     return JsonResponse(response_data)
 
 def cardset_remove(request):
     cardset_id = request.POST.get("cardset_id")
@@ -254,7 +299,7 @@ def cardset_remove(request):
     # получаем все наборы карт пользователя и перерисовываем подключаемый шаблон
     user_cardset = get_user_cardsets(request)
     cardset_items_html = render_to_string(
-        "card_decks/includes/included_slider_cardset.html", {"cardsets": user_cardset}, request=request)
+        "card_decks/includes/included_cardset_item.html", {"cardsets": user_cardset}, request=request)
     response_data = {
         "message": "Набор карт пользователя удален",
         "cardset_items_html": cardset_items_html,

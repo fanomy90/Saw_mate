@@ -3,6 +3,7 @@
 {% load cards_tags %}
 {% load carddecks_tags %}
 <div class="card mb-3 text-bg-light shadow-lg">
+    <!--Список наборов карт для игры-->
     <ul class="cardset_list">
         {% for set in cardsets %}
             <div>
@@ -16,8 +17,15 @@
                                     alt="Catalog Icon" width="16" height="16">
                             </a>
                         </h3>
-                        <button class="btn btn-secondary btn-dark" type="button" data-bs-toggle="dropdown"
-                            aria-expanded="false">Набор № {{ set.id }}
+                        <!--редактирование набора карт и установка набора активным для игры-->
+                        <button 
+                            data-url="{% url "carddeck:cardset_change" %}"
+                            class="btn btn-secondary btn-dark cardset_change" 
+                            type="button"
+                            data-cardset-id="{{ set.id }}">
+                            {% comment %} для безопасности добавим токен {% endcomment %}
+                            {% csrf_token %}
+                            Набор № {{ set.id }}
                         </button>
                         {% comment %} карточек в наборе - {{ set.setitem_set.total_quantity }},  {% endcomment %}
                         {% comment %} набор создан - {{ set.created_timestamp }}, {% endcomment %}
@@ -26,16 +34,20 @@
             </div>
         {% endfor %}
         <br>
-        <button type="button" class="btn btn-dark btn-sm increment-carddeck"
-            data-carddeck-id="{{ carddeck.id }}" 
-            data-carddeck-change-url="{% url 'carddeck:carddeck_change' %}">
-            {% csrf_token %}
-            +
-        </button>
+        <div>
+            <button
+                data-url="{% url 'carddeck:cardset_create' %}"
+                class="btn btn-dark btn-sm cardset_create"
+                type="button">
+                {% comment %} data-carddeck-id="{{ carddeck.id }}"  {% endcomment %}
+                {% csrf_token %}
+                +
+            </button>
+        </div>
     </ul>
 
 
-
+    <!--Карты в активном наборе-->
     {% for item in set.setitem_set.all %}
         <div class="content">
             <div class="card-img">

@@ -143,12 +143,12 @@
                             <!--сделать кнопку для переноса карточки в набор-->
                             <br>
                             {% if carddecks %}
-                                <a class="btn btn-dark" href="{% url 'carddecks:cardset_create' %}">Создать набор карт для игры</a>
+                                {% comment %} <a class="btn btn-dark" href="{% url 'carddecks:cardset_create' %}">Создать набор карт для игры</a> {% endcomment %}
                             {% endif %}
                         </div>
                     </div>
                 </div>
-                <!--Разметка наборов карточек для игры внешняя-->
+                <!--блок вывода наборов карточек для игры-->
                 <br>
                 {% user_cardsets request as cardsets %}
                 {% user_setitem request as setitem %}
@@ -158,8 +158,6 @@
                     <div class=" bg-white p-4 mb-4 mx-2 rounded custom-shadow">
                         <h3 class="text-center mb-4">Наборы карт пользователя</h3>
                         <div class="container" id="cardset-items-container">
-                            {% comment %} {% include "card_decks/includes/included_carddeck.html" %} {% endcomment %}
-                            {% comment %} {% include "card_decks/includes/included_slider_cardset.html" %} {% endcomment %}
                             {% include "card_decks/includes/included_cardset_item.html" %}
                         </div>
                         

@@ -1,70 +1,70 @@
 // Функция для инициализации слайдера
-function initSwiper() {
-    // Находим все блоки .tranding-slider на странице
-    var allSliders = document.querySelectorAll('.tranding-slider');
-    // Проходимся по каждому блоку .tranding-slider
-    allSliders.forEach(function (sliderElement) {
-        // Проверяем, есть ли слайды в текущем блоке
-        var sliderItemsExist = sliderElement.querySelectorAll('.swiper-slide').length > 0;
-        // Если есть слайды, инициализируем слайдер
-        if (sliderItemsExist) {
-            var TrandingSlider = new Swiper(sliderElement, {
-                effect: 'coverflow',
-                grabCursor: true,
-                centeredSlides: true,
-                loop: true,
-                slidesPerView: 'auto',
-                coverflowEffect: {
-                    rotate: 0,
-                    stretch: 0,
-                    depth: 100,
-                    modifier: 2.5,
-                },
-                pagination: {
-                    el: '.swiper-pagination',
-                    clickable: true,
-                },
-                navigation: {
-                    nextEl: '.swiper-button-next',
-                    prevEl: '.swiper-button-prev',
-                }
-            });
-        }
-    });
-}
+// function initSwiper() {
+//     // Находим все блоки .tranding-slider на странице
+//     var allSliders = document.querySelectorAll('.tranding-slider');
+//     // Проходимся по каждому блоку .tranding-slider
+//     allSliders.forEach(function (sliderElement) {
+//         // Проверяем, есть ли слайды в текущем блоке
+//         var sliderItemsExist = sliderElement.querySelectorAll('.swiper-slide').length > 0;
+//         // Если есть слайды, инициализируем слайдер
+//         if (sliderItemsExist) {
+//             var TrandingSlider = new Swiper(sliderElement, {
+//                 effect: 'coverflow',
+//                 grabCursor: true,
+//                 centeredSlides: true,
+//                 loop: true,
+//                 slidesPerView: 'auto',
+//                 coverflowEffect: {
+//                     rotate: 0,
+//                     stretch: 0,
+//                     depth: 100,
+//                     modifier: 2.5,
+//                 },
+//                 pagination: {
+//                     el: '.swiper-pagination',
+//                     clickable: true,
+//                 },
+//                 navigation: {
+//                     nextEl: '.swiper-button-next',
+//                     prevEl: '.swiper-button-prev',
+//                 }
+//             });
+//         }
+//     });
+// }
 
 // Обработчик события при раскрытии аккордеона
-$(document).on('show.bs.collapse', '.accordion-collapse', function () {
-    //аккордеон наборов карт
-    var setId = $(this).data('set-id');
-    if (setId !== undefined) {
-        console.log("Значение data-set-id:", setId);
-        globalSetId = setId;
-        localStorage.setItem('activeAccordion', setId);
-    }
-    //аккордеон категорий колоды карт пользователя
-    var catId = $(this).data('category-id');
-    if (catId !== undefined) {
-        console.log("Значение data-cat-id:", catId);
-        globalCatId = catId; // Присваиваем значение setId глобальной переменной globalSetId
-        localStorage.setItem('activeCatIdAccordion', catId); // Сохраняем в локальное хранилище id категории колоды
-    }
-});
-// Проверяем, есть ли сохраненный активный аккордеон в Local Storage при загрузке страницы
-$(document).ready(function() {
-    //проверяем сохраненный аккордеон наборов карт
-    var activeAccordion = localStorage.getItem('activeAccordion');
-    if (activeAccordion !== null) {
-        // Раскрываем аккордеон с сохраненным ID
-        $('#collapse' + activeAccordion).collapse('show');
-    }
-    //проверяем сохраненный аккордеон категории колоды карт
-    var activeCatIdAccordion = localStorage.getItem('activeCatIdAccordion');
-    if (activeCatIdAccordion !== null) {
-        // Раскрываем аккордеон с сохраненным ID
-        $('#collapse' + activeCatIdAccordion).collapse('show');
-    }
-});
+// $(document).on('show.bs.collapse', '.accordion-collapse', function () {
+//     //аккордеон наборов карт
+//     var setId = $(this).data('set-id');
+//     if (setId !== undefined) {
+//         console.log("Значение data-set-id:", setId);
+//         globalSetId = setId;
+//         localStorage.setItem('activeAccordion', setId);
+//     }
+//     //аккордеон категорий колоды карт пользователя
+//     var catId = $(this).data('category-id');
+//     if (catId !== undefined) {
+//         console.log("Значение data-cat-id:", catId);
+//         globalCatId = catId; // Присваиваем значение setId глобальной переменной globalSetId
+//         localStorage.setItem('activeCatIdAccordion', catId); // Сохраняем в локальное хранилище id категории колоды
+//     }
+// });
+// // Проверяем, есть ли сохраненный активный аккордеон в Local Storage при загрузке страницы
+// $(document).ready(function() {
+//     //проверяем сохраненный аккордеон наборов карт
+//     var activeAccordion = localStorage.getItem('activeAccordion');
+//     if (activeAccordion !== null) {
+//         // Раскрываем аккордеон с сохраненным ID
+//         $('#collapse' + activeAccordion).collapse('show');
+//     }
+//     //проверяем сохраненный аккордеон категории колоды карт
+//     var activeCatIdAccordion = localStorage.getItem('activeCatIdAccordion');
+//     if (activeCatIdAccordion !== null) {
+//         // Раскрываем аккордеон с сохраненным ID
+//         $('#collapse' + activeCatIdAccordion).collapse('show');
+//     }
+// });
 // Проверяем количество элементов в списке и меняем его стиль
 $(document).ready(function(){
     //специальный стиль когда мало элементов в наборе карт
@@ -99,40 +99,36 @@ $(document).ready(function () {
     // берем в переменную элемент разметки с id jq-notification для оповещений от ajax
     var successMessage = $("#jq-notification");
     // Инициализация слайдера после загрузки DOM
-    initSwiper();
+    //initSwiper();
     //переменная для хранения раскрытой категории колоды карт - скорее всего не нужен, убрать в будущем
-    var globalCatId;
+    //var globalCatId;
     // Переменная для передачи id набора карт для обработки переноса карточек
     var globalSetId; // Объявляем глобальную переменную globalSetId
     // Получаем все раскрытые элементы с классом .accordion-collapse набора карт
-    $('.accordion-collapse.show').each(function() {
-        var setId = $(this).data('set-id'); // Получаем значение data-set-id текущего раскрытого набора карт
-        if (setId !== undefined) {
-            console.log("Значение data-set-id:", setId);
-            globalSetId = setId; // Присваиваем значение setId глобальной переменной globalSetId
-        }
-        var catId = $(this).data('category-id');
-        if (catId !== undefined) {
-            console.log("Значение data-cat-id:", catId);
-            globalCatId = catId; // Присваиваем значение setId глобальной переменной globalSetId
-        }
-    });
+    // $('.accordion-collapse.show').each(function() {
+    //     var setId = $(this).data('set-id'); // Получаем значение data-set-id текущего раскрытого набора карт
+    //     if (setId !== undefined) {
+    //         console.log("Значение data-set-id:", setId);
+    //         globalSetId = setId; // Присваиваем значение setId глобальной переменной globalSetId
+    //     }
+    //     var catId = $(this).data('category-id');
+    //     if (catId !== undefined) {
+    //         console.log("Значение data-cat-id:", catId);
+    //         globalCatId = catId; // Присваиваем значение setId глобальной переменной globalSetId
+    //     }
+    // });
 
     // Ловим собыитие клика по кнопке добавить в корзину
     $(document).on("click", ".add-to-cart", function (e) {
         // Блокируем его базовое действие, ловим событие и все что находится внутри тега
         e.preventDefault();
-
         // Берем элемент счетчика в значке корзины и берем оттуда значение
         var cardsInCartCount = $("#cards-in-cart-count");
         var cartCount = parseInt(cardsInCartCount.text() || 0);
-
         // Получаем id товара из атрибута data-product-id
         var product_id = $(this).data("product-id");
-
         // Из атрибута href берем ссылку на контроллер django
         var add_to_cart_url = $(this).attr("href");
-
         // делаем post запрос через ajax не перезагружая страницу
         $.ajax({
             type: "POST",
@@ -149,23 +145,58 @@ $(document).ready(function () {
                 setTimeout(function () {
                     successMessage.fadeOut(400);
                 }, 7000);
-
                 // Увеличиваем количество товаров в корзине (отрисовка в шаблоне)
                 cartCount++;
                 cardsInCartCount.text(cartCount);
-
                 // Меняем содержимое корзины на ответ от django (новый отрисованный фрагмент разметки корзины)
                 var cartItemsContainer = $("#cart-items-container");
                 cartItemsContainer.html(data.cart_items_html);
-
             },
-
             error: function (data) {
                 console.log("Ошибка при добавлении товара в корзину");
             },
         });
     });
 
+    // Ловим событие клика по кнопке для редактирования набора карт для игры
+    $(document).on("click", ".cardset_change", function (e) {
+        // Блокируем его базовое действие, ловим событие и все что находится внутри тега
+        e.preventDefault();
+        // Из атрибута href берем ссылку на контроллер django
+        var create_cardset_url = $(this).data("url");
+
+    // Ловим событие клика по кнопке для создания набора карт для игры
+    $(document).on("click", ".cardset_create", function (e) {
+        // Блокируем его базовое действие, ловим событие и все что находится внутри тега
+        e.preventDefault();
+        // Из атрибута href берем ссылку на контроллер django
+        var create_cardset_url = $(this).data("url");
+        // делаем post запрос через ajax не перезагружая страницу
+        $.ajax({
+            type: "POST",
+            url: create_cardset_url,
+            data: {
+                csrfmiddlewaretoken: $("[name=csrfmiddlewaretoken]").val(),
+            },
+            success: function (data) {
+                // Сообщение
+                var successMessage = $("<div>").html(data.message).fadeIn(400);
+                $("body").append(successMessage);
+                // Через 7сек убираем сообщение
+                setTimeout(function () {
+                    successMessage.fadeOut(400, function() {
+                        successMessage.remove();
+                    });
+                }, 7000);
+                // Меняем содержимое корзины на ответ от django (новый отрисованный фрагмент разметки корзины)
+                var cardsetItemsContainer = $("#cardset-items-container");
+                cardsetItemsContainer.html(data.cardset_items_html);
+            },
+            error: function (data) {
+                console.log("Ошибка при добавлении товара в корзину");
+            },
+        });
+    });
     // Ловим собыитие клика по кнопке добавить карту в колоду
     $(document).on("click", ".add-to-carddeck", function (e) {
         // Блокируем его базовое действие, ловим событие и все что находится внутри тега
@@ -483,7 +514,6 @@ $(document).ready(function () {
         });
     });
 
-
     // Ловим событие клика по кнопке удалить набор карт
     $(document).on("click", ".remove-cardset", function (e) {
         // Блокируем его базовое действие
@@ -533,9 +563,6 @@ $(document).ready(function () {
             },
         });
     });
-
-
-
 
     // Теперь + - количества карточек 
     // Обработчик события для уменьшения значения
@@ -612,6 +639,8 @@ $(document).ready(function () {
         // с аргументами (id карты, новое количество, количество уменьшилось или прибавилось, url)
         updateCarddeck(carddeckID, currentValue + 1, 1, url);
     });
+
+
 
     // Обновление корзины
     function updateCart(cartID, quantity, change, url) {

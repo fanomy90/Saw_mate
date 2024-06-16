@@ -46,10 +46,36 @@
     list-style-type: none;
     padding: 0;
     overflow-x: auto;
+    white-space: nowrap;
 }
+
+.cardset_list > li {
+    flex-shrink: 0; /* Это предотвратит сжатие элементов списка */
+}
+
 .cardset_list_item {
+    display: inline-block;
+    margin-right: 10px;
+    margin-bottom: 10px;
     display: flex;
 }
+
+/* поиграемся со стилем полосы прокрутки */
+
+.cardset_list::-webkit-scrollbar {
+    height: 8px; /* Высота полосы прокрутки */
+}
+.cardset_list::-webkit-scrollbar-track {
+    background: #888; /* Цвет фона полосы прокрутки */
+}
+.cardset_list::-webkit-scrollbar-thumb {
+    background: purple; /* Цвет полосы прокрутки */
+    border-radius: 4px; /* Скругление углов полосы прокрутки */
+}
+.cardset_list::-webkit-scrollbar-thumb:hover {
+    background: #555; /* Цвет полосы прокрутки при наведении */
+}
+
 /*дополнительный стиль когда карточек баффов в наборе меньше 3*/
 .simple_card_list {
     justify-content: center;

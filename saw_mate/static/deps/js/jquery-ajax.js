@@ -162,7 +162,7 @@ $(document).ready(function () {
     $(document).on("click", ".cardset_change", function (e) {
         // Блокируем его базовое действие, ловим событие и все что находится внутри тега
         e.preventDefault();
-        // Из атрибута href берем ссылку на контроллер django
+        // Из атрибута берем ссылку на контроллер django
         var change_cardset_url = $(this).data("url");
         var cardset_id = $(this).data("cardset-id");
         $.ajax({
@@ -183,8 +183,6 @@ $(document).ready(function () {
                     });
                 }, 7000);
                 // Меняем содержимое профиля пользователя на ответ от django (новый отрисованный фрагмент разметки)
-                // var cardsetItemsContainer = $("#cardset-items-container");
-                // cardsetItemsContainer.html(data.cardset_items_html);
                 $("#cardset-items-container").html(data.cardset_items_html);
             },
             error: function (data) {
@@ -192,6 +190,41 @@ $(document).ready(function () {
             },
         });
     });
+    // активация набора карт
+    $(document).on("click", ".cardset_activate", function (e) {
+        // Блокируем его базовое действие, ловим событие и все что находится внутри тега
+        e.preventDefault();
+        // Из атрибута берем ссылку на контроллер django
+        var activate_cardset_url = $(this).data("url");
+        var cardset_id = $(this).data("cardset-id");
+
+        $.ajax({
+            type: "POST",
+            url: activate_cardset_url,
+            data: {
+                cardset_id: cardset_id,
+                csrfmiddlewaretoken: $("[name=csrfmiddlewaretoken]").val(),
+            },
+            success: function (data) {
+                // Сообщение
+                successMessage.html(data.message);
+                successMessage.fadeIn(400);
+                // Через 7сек убираем сообщение
+                setTimeout(function () {
+                    successMessage.fadeOut(400);
+                }, 7000);
+                // Меняем содержимое профиля пользователя на ответ от django (новый отрисованный фрагмент разметки)
+                $("#cardset-items-container").html(data.cardset_items_html);
+            },
+            error: function (data) {
+                console.log("Ошибка при изменении набора карт");
+            },
+        });
+    });
+
+
+
+
 
     // Ловим событие клика по кнопке для создания набора карт для игры
     $(document).on("click", ".cardset_create", function (e) {
@@ -569,11 +602,11 @@ $(document).ready(function () {
             success: function (data) {
                 // Сообщение
                 successMessage.html(data.message);
-                successMessage.fadeIn(400);
+                successMessage.fadeIn(200);
                 // Через 7сек убираем сообщение
                 setTimeout(function () {
-                    successMessage.fadeOut(400);
-                }, 7000);
+                    successMessage.fadeOut(200);
+                }, 4000);
 
                 // Уменьшаем количество наборов карт в профиле (отрисовка)
                 //setCount -= data.quantity_deleted;

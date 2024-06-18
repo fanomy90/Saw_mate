@@ -223,6 +223,7 @@ def cardset_add(request):
     }
     return render(request, 'card_decks/cardset_create.html', context=context)
 
+# переделать представление - сейчас оно отображает объекты из выбранного набора
 def cardset_change(request):
     if request.method == 'POST':
         response_data = {}
@@ -230,13 +231,19 @@ def cardset_change(request):
             with transaction.atomic():
                 # user = request.user
                 cardset_id = request.POST.get("cardset_id")
-                cardset = Set.objects.get(user=request.user, id=cardset_id)
-                cardset.active = True
-                cardset.save()
+                # cardset = Set.objects.get(user=request.user, id=cardset_id)
+                # cardset.active = True
+                # cardset.save()
                 # messages.success(request, 'Набор карт активирован')
                 user_cardset = get_user_cardsets(request)
                 user_setitems = get_user_setitem(request, cardset_id)
-                cardset_items_html = render_to_string("card_decks/includes/included_cardset_item.html", {"setitems": user_setitems, "cardsets": user_cardset}, request=request)
+                current_set_active = user_setitems.first().set.active if user_setitems.exists() else False
+                cardset_items_html = render_to_string("card_decks/includes/included_cardset_item.html", {
+                    "setitems": user_setitems, 
+                    "cardsets": user_cardset, 
+                    "current_set_id": cardset_id,
+                    "current_set_active": current_set_active
+                    }, request=request)
                 response_data = {
                     "message": "Набор карт передан для показа",
                     "cardset_items_html": cardset_items_html,
@@ -245,18 +252,58 @@ def cardset_change(request):
             messages.error(request, "Набор карт не найден.")
         except Exception as e:
             messages.error(request, str(e))
-                # Получаем все наборы карт пользователя с помощью метода из файла utils.py
-        # user_setitem = get_user_setitem(request)
-        # Преобразуем в строку разметку набора карт пользователя с передачей в разметку контекста
-        # cardset_items_html = render_to_string("card_decks/includes/included_cardset_item.html", {"cardsets": user_setitem}, request=request)
-        # Собираем контекст для передачи изменений в наборе карт в jQuery
-        # response_data = {
-        #     "message": "Набор карт передан для показа",
-        #     "cardset_items_html": cardset_items_html,
-        # }
         return JsonResponse(response_data)
     else:
         return JsonResponse({"message": "Некорректный запрос."}, status=400)
+
+# активация набора карт
+def cardset_activate(request):
+    if request.method == 'POST':
+        response_data = {}
+        try:
+            with transaction.atomic():
+                cardset_id = request.POST.get("cardset_id")
+                
+                if not cardset_id or not cardset_id.isdigit():
+                    raise ValueError("Некорректный идентификатор набора карт.")
+                user_setitems = get_user_setitem(request, cardset_id)
+
+                # if user_setitems.exists():
+                if user_setitems.count() > 2:
+                    # Деактивируем все наборы карт
+                    Set.objects.filter(user=request.user).update(active=False)
+                    
+                    # Активируем набор по id
+                    cardset = Set.objects.get(user=request.user, id=cardset_id)
+                    cardset.active = True
+                    cardset.save()
+                    message = "Набор карт активирован"
+                else:
+                    message = "Для активации набора добавьте карты - минимум 3 карты в наборе"
+                user_cardset = get_user_cardsets(request)
+                current_set_active = user_setitems.first().set.active if user_setitems.exists() else False
+                cardset_items_html = render_to_string("card_decks/includes/included_cardset_item.html", {
+                    "setitems": user_setitems,
+                    "cardsets": user_cardset,
+                    "current_set_id": cardset_id,
+                    "current_set_active": current_set_active
+                }, request=request)
+
+                response_data = {
+                    "message": message,
+                    "cardset_items_html": cardset_items_html,
+                }
+        except Set.DoesNotExist:
+            response_data['message'] = "Набор карт не найден."
+        except ValueError as ve:
+            response_data['message'] = str(ve)
+        except Exception as e:
+            response_data['message'] = str(e)
+        
+        return JsonResponse(response_data)
+    else:
+        return JsonResponse({"message": "Некорректный запрос."}, status=400)
+
 
 #переносим карту из набора в колоду
 # def cardset_change(request):

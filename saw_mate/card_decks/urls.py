@@ -9,6 +9,7 @@ urlpatterns = [
     path('cardset_create/', views.cardset_create, name='cardset_create'),
     path('cardset_add/', views.cardset_add, name='cardset_add'),
     path('cardset_change/', views.cardset_change, name='cardset_change'),
+    path('cardset_activate/', views.cardset_activate, name='cardset_activate'),
     path('cardset_remove/', views.cardset_remove, name='cardset_remove'),
     path('setitem_remove/', views.setitem_remove, name='setitem_remove'),
 ]

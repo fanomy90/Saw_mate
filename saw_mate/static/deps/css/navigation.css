@@ -243,3 +243,10 @@ button {
         opacity: 1;
     }
 }
+
+.btn-purple {
+    background-color: #6a0dad; /* фиолетовый цвет */
+    color: white; /* белый текст */
+    opacity: 0.65; /* прозрачность для отключенной кнопки */
+    cursor: not-allowed; /* курсор неактивного состояния */
+}

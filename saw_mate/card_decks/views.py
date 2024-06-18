@@ -233,7 +233,7 @@ def cardset_change(request):
                 cardset = Set.objects.get(user=request.user, id=cardset_id)
                 cardset.active = True
                 cardset.save()
-                messages.success(request, 'Набор карт активирован')
+                # messages.success(request, 'Набор карт активирован')
                 user_cardset = get_user_cardsets(request)
                 user_setitems = get_user_setitem(request, cardset_id)
                 cardset_items_html = render_to_string("card_decks/includes/included_cardset_item.html", {"setitems": user_setitems, "cardsets": user_cardset}, request=request)
